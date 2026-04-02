@@ -26,13 +26,13 @@ import pandas as pd
 from urllib.parse import urlparse
 from flask import Flask, render_template, request, jsonify, Response, stream_with_context, send_from_directory, redirect
 from flask_login import login_required, current_user
-from secrets_loader import load_secrets
+from dotenv import load_dotenv
 
 # Force UTF-8 on Windows
 sys.stdout.reconfigure(encoding="utf-8")
 
-# Load secrets: AWS Secrets Manager on EC2, .env file locally
-load_secrets()
+# Load .env (override any blank system env vars)
+load_dotenv(override=True)
 
 # Add current dir to path so agent imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

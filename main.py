@@ -10,13 +10,13 @@ import sys
 import time
 import argparse
 import pandas as pd
-from secrets_loader import load_secrets
+from dotenv import load_dotenv
 
 # Force UTF-8 output so emoji characters work on Windows terminals
 sys.stdout.reconfigure(encoding="utf-8")
 
-# Load secrets: AWS Secrets Manager on EC2, .env file locally
-load_secrets()
+# Load .env file so ANTHROPIC_API_KEY / HUBSPOT_API_KEY are available
+load_dotenv()
 from agents.icp_agent import ICPQualificationAgent
 from agents.research_agent import CompanyResearchAgent
 from agents.pain_agent import PainSignalAgent
