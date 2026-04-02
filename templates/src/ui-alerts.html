@@ -1,0 +1,398 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Alerts" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+
+                {{> page-title subtitle="Components" title="Alerts" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">KT Alerts</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-5">
+
+                                <!-- Default Alert -->
+                                <div class="kt-alert" id="alert_default">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-muted-foreground text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a default alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined">Upgrade</button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_default">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Primary Alert -->
+                                <div class="kt-alert kt-alert-primary" id="alert_primary">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a primary alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined kt-link-inverse">Upgrade</button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_primary">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Success Alert -->
+                                <div class="kt-alert kt-alert-success" id="alert_success">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--check-circle text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a success alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined kt-link-inverse">Upgrade</button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_success">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Warning Alert -->
+                                <div class="kt-alert kt-alert-warning" id="alert_warning">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--alert-triangle text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a warning alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined kt-link-inverse">Upgrade</button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_warning">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Destructive Alert -->
+                                <div class="kt-alert kt-alert-destructive" id="alert_destructive">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--circle-x text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a destructive alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined kt-link-inverse">Upgrade</button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_destructive">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">KT Alerts</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-5">
+                                <div class="kt-alert kt-alert-outline kt-alert-primary" id="alert_1">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a primary alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono-foreground">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_1">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-success" id="alert_2">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a success alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono-foreground">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_2">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-info" id="alert_3">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is an info alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono-foreground">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_3">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-destructive" id="alert_4">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a destructive alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono-foreground">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_4">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-warning" id="alert_5">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a warning alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono-foreground">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#alert_5">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Light</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-5">
+                                <div class="kt-alert kt-alert-light kt-alert-primary" id="light_alert_1">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a primary alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#light_alert_1">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-light kt-alert-success" id="light_alert_2">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a success alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#light_alert_2">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-light kt-alert-info" id="light_alert_3">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is an info alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#light_alert_3">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-light kt-alert-destructive" id="light_alert_4">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a destructive alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#light_alert_4">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-light kt-alert-warning" id="light_alert_5">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a warning alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                            Upgrade
+                                        </button>
+                                        <button class="kt-alert-close" data-kt-dismiss="#light_alert_5">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Alert Size</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-5">
+                                <div class="kt-alert kt-alert-outline kt-alert-primary kt-alert-sm" id="size_alert_1">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a small alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-alert-close" data-kt-dismiss="#size_alert_1">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-primary" id="size_alert_2">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a default alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-alert-close" data-kt-dismiss="#size_alert_2">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-primary kt-alert-lg" id="size_alert_3">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--info text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-title">This is a large alert</div>
+                                    <div class="kt-alert-toolbar">
+                                        <button class="kt-alert-close" data-kt-dismiss="#size_alert_3">
+                                            <i class="iconify lucide--x text-xl"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Alert Action</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-5">
+                                <div class="kt-alert kt-alert-outline" id="action_alert_1">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--triangle-alert text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-content">
+                                        <h3 class="kt-alert-title">Example Alert Title</h3>
+                                        <p class="kt-alert-description">
+                                            Insert the alert description here. It would look better as two lines of
+                                            text.
+                                        </p>
+                                        <div class="kt-alert-toolbar">
+                                            <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                                Upgrade
+                                            </button>
+                                            <button class="kt-link kt-link-xs text-mono">Dismiss</button>
+                                        </div>
+                                    </div>
+                                    <button class="kt-alert-close" data-kt-dismiss="#action_alert_1">
+                                        <i class="iconify lucide--x text-xl"></i>
+                                    </button>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-destructive" id="action_alert_2">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--triangle-alert text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-content">
+                                        <h3 class="kt-alert-title">Example Alert Title</h3>
+                                        <p class="kt-alert-description">
+                                            Insert the alert description here. It would look better as two lines of
+                                            text.
+                                        </p>
+                                        <div class="kt-alert-toolbar">
+                                            <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                                Upgrade
+                                            </button>
+                                            <button class="kt-link kt-link-xs text-mono">Dismiss</button>
+                                        </div>
+                                    </div>
+                                    <button class="kt-alert-close" data-kt-dismiss="#action_alert_2">
+                                        <i class="iconify lucide--x text-xl"></i>
+                                    </button>
+                                </div>
+                                <div class="kt-alert kt-alert-outline kt-alert-warning" id="action_alert_3">
+                                    <div class="kt-alert-icon">
+                                        <i class="iconify lucide--triangle-alert text-xl"></i>
+                                    </div>
+                                    <div class="kt-alert-content">
+                                        <h3 class="kt-alert-title">Example Alert Title</h3>
+                                        <p class="kt-alert-description">
+                                            Insert the alert description here. It would look better as two lines of
+                                            text.
+                                        </p>
+                                        <div class="kt-alert-toolbar">
+                                            <button class="kt-link kt-link-xs kt-link-underlined text-mono">
+                                                Upgrade
+                                            </button>
+                                            <button class="kt-link kt-link-xs text-mono">Dismiss</button>
+                                        </div>
+                                    </div>
+                                    <button class="kt-alert-close" data-kt-dismiss="#action_alert_3">
+                                        <i class="iconify lucide--x text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

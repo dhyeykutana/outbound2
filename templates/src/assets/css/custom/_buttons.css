@@ -1,0 +1,7 @@
+/* //
+// buttons.scss
+// */
+
+.dropdown-content {
+    @apply rounded-md bg-white bg-clip-border shadow;
+}

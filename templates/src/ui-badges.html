@@ -1,0 +1,243 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Badge" }}
+
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Default Example</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-2.5">
+                                <span class="kt-badge">Default</span>
+                                <span class="kt-badge kt-badge-stroke">Stroke</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Solid Example</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-2.5">
+                                <span class="kt-badge kt-badge-primary">Primary</span>
+                                <span class="kt-badge kt-badge-secondary">Secondary</span>
+                                <span class="kt-badge kt-badge-destructive">Destructive</span>
+                                <span class="kt-badge kt-badge-warning">Warning</span>
+                                <span class="kt-badge kt-badge-success">Success</span>
+                                <span class="kt-badge kt-badge-info">Info</span>
+                                <span class="kt-badge kt-badge-mono">Mono</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Outline Example</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-2.5">
+                                <span class="kt-badge kt-badge-outline kt-badge-primary">Primary</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-secondary">Secondary</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-destructive">Destructive</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-warning">Warning</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-success">Success</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-info">Info</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-mono">Mono</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Light Example</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-2.5">
+                                <span class="kt-badge kt-badge-light kt-badge-primary">Primary</span>
+                                <span class="kt-badge kt-badge-light kt-badge-secondary">Secondary</span>
+                                <span class="kt-badge kt-badge-light kt-badge-destructive">Destructive</span>
+                                <span class="kt-badge kt-badge-light kt-badge-warning">Warning</span>
+                                <span class="kt-badge kt-badge-light kt-badge-success">Success</span>
+                                <span class="kt-badge kt-badge-light kt-badge-info">Info</span>
+                                <span class="kt-badge kt-badge-light kt-badge-mono">Mono</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Circle</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-2.5">
+                                <span class="kt-badge kt-badge-outline kt-badge-primary rounded-full">Primary</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-secondary rounded-full">Secondary</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-destructive rounded-full">Destructive</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-warning rounded-full">Warning</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-success rounded-full">Success</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-info rounded-full">Info</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-mono rounded-full">Mono</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Square</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="grid lg:grid-cols-3 gap-6">
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-secondary rounded-full">1</span>
+                                    <span class="kt-badge kt-badge-secondary rounded-full">1</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-secondary rounded-full">1</span>
+                                    <span class="kt-badge kt-badge-light kt-badge-secondary rounded-full">1</span>
+                                </div>
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-primary rounded-full">2</span>
+                                    <span class="kt-badge kt-badge-primary rounded-full">2</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-primary rounded-full">2</span>
+                                    <span class="kt-badge kt-badge-light kt-badge-primary rounded-full">2</span>
+                                </div>
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-destructive rounded-full">3</span>
+                                    <span class="kt-badge kt-badge-destructive rounded-full">3</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-destructive rounded-full">3</span>
+                                    <span class="kt-badge kt-badge-light kt-badge-destructive rounded-full">3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Dot</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="grid lg:grid-cols-2 gap-6">
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-secondary"><span class="kt-badge-dot"></span> Ghost</span>
+                                    <span class="kt-badge kt-badge-secondary"><span class="kt-badge-dot"></span> Solid</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-secondary"><span class="kt-badge-dot"></span> Outline</span>
+                                    <span class="kt-badge kt-badge-light kt-badge-secondary"><span class="kt-badge-dot"></span> Light</span>
+                                </div>
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-primary"><span class="kt-badge-dot"></span> Ghost</span>
+                                    <span class="kt-badge kt-badge-primary"><span class="kt-badge-dot"></span> Solid</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-primary"><span class="kt-badge-dot"></span> Outline</span>
+                                    <span class="kt-badge kt-badge-light kt-badge-primary"><span class="kt-badge-dot"></span> Light</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Icon</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="grid lg:grid-cols-2 gap-6">
+
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-secondary">
+                                        <i class="iconify lucide--tag"></i>
+                                        Ghost
+                                    </span>
+                                    <span class="kt-badge kt-badge-secondary">
+                                        <i class="iconify lucide--mail"></i>
+                                        Solid
+                                    </span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-secondary">
+                                        <i class="iconify lucide--file-plus"></i>
+                                        Outline
+                                    </span>
+                                    <span class="kt-badge kt-badge-light kt-badge-secondary">
+                                        <i class="iconify lucide--activity"></i>
+                                        Light
+                                    </span>
+                                </div>
+
+
+                                <div class="flex gap-4">
+                                    <span class="kt-badge kt-badge-ghost kt-badge-info">
+                                        <i class="iconify lucide--tag"></i>
+                                        Ghost
+                                    </span>
+                                    <span class="kt-badge kt-badge-info">
+                                        <i class="iconify lucide--mail"></i>
+                                        Solid
+                                    </span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-info">
+                                        <i class="iconify lucide--file-plus"></i>
+                                        Outline
+                                    </span>
+                                    <span class="kt-badge kt-badge-light kt-badge-info">
+                                        <i class="iconify lucide--activity"></i>
+                                        Light
+                                    </span>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Icon</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="grid lg:grid-cols-2 gap-6">
+                                <div class="flex flex-wrap items-center gap-4">
+                                    <span class="kt-badge kt-badge-xs kt-badge-outline kt-badge-primary rounded-full">Extra small</span>
+                                    <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-primary rounded-full">Small</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-primary rounded-full">Default</span>
+                                    <span class="kt-badge kt-badge-lg kt-badge-outline kt-badge-primary rounded-full">Large</span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-4">
+                                    <span class="kt-badge kt-badge-xs kt-badge-outline kt-badge-secondary rounded-full">Extra small</span>
+                                    <span class="kt-badge kt-badge-sm kt-badge-outline kt-badge-secondary rounded-full">Small</span>
+                                    <span class="kt-badge kt-badge-outline kt-badge-secondary rounded-full">Default</span>
+                                    <span class="kt-badge kt-badge-lg kt-badge-outline kt-badge-secondary rounded-full">Large</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

@@ -1,0 +1,212 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Tooltip" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Tooltip" }}
+
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Default Example</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-tooltip="#external_tooltip" data-kt-tooltip-placement="bottom-start">
+                                    Show Tooltip
+                                </button>
+                                <div id="external_tooltip" class="kt-tooltip">
+                                    Hey, a delightful tooltip is here!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">with Transition</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom-start">
+                                Show tooltip<span data-kt-tooltip-content="true" class="kt-tooltip transition-opacity duration-300">Hey, a delightful tooltip is here!</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">with Advanced Content</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom-start">
+                                Show tooltip
+                                <span data-kt-tooltip-content="true" class="kt-tooltip">
+                                    <span class="flex items-center gap-1.5">
+                                        Trial expires in 29 days
+                                        <i class="iconify lucide--triangle-alert text-yellow-500 size-4"></i>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">with Light Style</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom-start">
+                                Show tooltip<span data-kt-tooltip-content="true" class="kt-tooltip kt-tooltip-light">Hey, this is a finely polished tooltip example.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Popover Style</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-tooltip="#popover_content" data-kt-tooltip-trigger="click" data-kt-tooltip-placement="bottom-start">
+                                    Toggle Popover
+                                </button>
+
+                                <div id="popover_content" class="kt-popover max-w-56">
+                                    <div class="kt-popover-header">Popover Title</div>
+                                    <div class="kt-popover-content">
+                                        Behold this captivating popover content. It’s quite engaging, wouldn’t you
+                                        say?
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Placement</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex items-center flex-wrap gap-4">
+                                <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="left">
+                                    <i class="iconify lucide--move-left size-4"></i>
+                                    Left
+                                    <span data-kt-tooltip-content="true" class="kt-tooltip">
+                                        Tooltip positioned at the top.
+                                    </span>
+                                </button>
+
+                                <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="top">
+                                    <i class="iconify lucide--move-up size-4"></i>
+                                    Top
+                                    <span data-kt-tooltip-content="true" class="kt-tooltip">
+                                        Tooltip positioned at the bottom.
+                                    </span>
+                                </button>
+
+                                <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom">
+                                    <i class="iconify lucide--move-down size-4"></i>
+                                    Bottom
+                                    <span data-kt-tooltip-content="true" class="kt-tooltip">
+                                        Tooltip positioned at the left.
+                                    </span>
+                                </button>
+
+                                <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="right">
+                                    <i class="iconify lucide--move-right size-4"></i>
+                                    Right
+                                    <span data-kt-tooltip-content="true" class="kt-tooltip">
+                                        Tooltip positioned at the right.
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Trigger Options</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex items-center flex-wrap gap-4">
+                                <div class="flex flex-wrap gap-4">
+                                    <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-trigger="hover">
+                                        Hover(default)<span data-kt-tooltip-content="true" class="kt-tooltip">I am triggered by hover.</span>
+                                    </button>
+
+                                    <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-trigger="click">
+                                        Click<span data-kt-tooltip-content="true" class="kt-tooltip">I am triggered by click.</span>
+                                    </button>
+
+                                    <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-trigger="focus" tabindex="0">
+                                        Focus<span data-kt-tooltip-content="true" class="kt-tooltip">I am triggered by focus.</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Offset Options</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom-start" data-kt-tooltip-offset="20px,20px">
+                                Show tooltip<span data-kt-tooltip-content="true" class="kt-tooltip">Hey, a delightful tooltip is here!</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Delay Options</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom-start" data-kt-tooltip-delay-show="1500" data-kt-tooltip-delay-hide="1500">
+                                Show tooltip<span data-kt-tooltip-content="true" class="kt-tooltip">Hey, a delightful tooltip is here!</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Permanent Options</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn" data-kt-tooltip="true" data-kt-tooltip-placement="bottom-start" data-kt-tooltip-trigger="click" data-kt-tooltip-permanent="true">
+                                Show tooltip<span data-kt-tooltip-content="true" class="kt-tooltip">Hey, a delightful tooltip is here!</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div> <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Alerts" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Alerts" }}
+
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Line with Data Labels</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="line_chart_datalabel" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Dashed Line</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="line_chart_dashed" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Spline Area</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="spline_area" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Column Chart</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="column_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Column with Data Labels</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="column_chart_datalabel" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Bar Chart</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="bar_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Line, Column & Area Chart</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="mixed_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Radial Chart</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="radial_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div><!--end kt-card-->
+
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Pie Chart</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="pie_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Donut Chart</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div id="donut_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+    <script src="assets/js/pages/charts.js" type="module"></script>
+
+</body>
+
+</html>

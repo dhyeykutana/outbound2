@@ -1,0 +1,108 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Alerts" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+
+                {{> page-title subtitle="Components" title="Alerts" }}
+
+
+                <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
+
+                    <div class="lg:col-span-2">
+                        <div class="kt-card">
+                            <div class="p-6">
+                                <h4 class="kt-card-title mb-4">World Vector Map</h4>
+
+                                <div class="mb-3">
+                                    <div id="world-map-markers" style="height: 360px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="p-6">
+                            <h4 class="kt-card-title mb-4">India Vector Map</h4>
+
+                            <div class="mb-3">
+                                <div id="india-vector-map" style="height: 360px"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="p-6">
+                            <h4 class="kt-card-title mb-4">Russia Vector Map</h4>
+
+                            <div class="mb-3">
+                                <div id="russia-vector-map" style="height: 360px"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="kt-card">
+                        <div class="p-6">
+                            <h4 class="kt-card-title mb-4">Canada Vector Map</h4>
+
+                            <div class="mb-3">
+                                <div id="canada-vector-map" style="height: 360px"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="p-6">
+                            <h4 class="kt-card-title mb-4">Iraq Vector Map</h4>
+
+                            <div class="mb-3">
+                                <div id="iraq-vector-map" style="height: 360px"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="p-6">
+                            <h4 class="kt-card-title mb-4">Spain Vector Map</h4>
+
+                            <div class="mb-3">
+                                <div id="spain-vector-map" style="height: 360px"></div>
+                            </div>
+                        </div>
+                    </div> <!-- end kt-card body -->
+
+                </div><!-- end grid-->
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+    <!-- Vector Map Demo js-->
+    <script src="assets/js/pages/maps-vector.js" type="module"></script>
+
+</body>
+
+</html>

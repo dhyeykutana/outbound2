@@ -1,0 +1,97 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Accordion" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Accordion" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Default Example</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <button class="kt-btn kt-btn-outline" id="toast_btn">Show Toast</button>
+
+                            <div class="flex items-center h-full w-full flex-wrap gap-4">
+                                <div class="flex flex-col gap-4">
+                                    <button class="kt-btn kt-btn-outline text-primary" id="toast_variant_primary">Primary Toast</button>
+                                    <button class="kt-btn kt-btn-outline text-green-500" id="toast_variant_success">Success Toast</button>
+                                    <button class="kt-btn kt-btn-outline text-yellow-500" id="toast_variant_warning">Warning Toast</button>
+                                    <button class="kt-btn kt-btn-outline text-destructive" id="toast_variant_destructive">Destructive Toast</button>
+                                    <button class="kt-btn kt-btn-outline text-violet-500" id="toast_variant_info">Info Toast</button>
+                                    <button class="kt-btn kt-btn-outline text-mono" id="toast_variant_mono">Mono Toast</button>
+                                    <button class="kt-btn kt-btn-outline text-muted-foreground" id="toast_variant_secondary">Secondary Toast</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+    <script type="module">
+
+        import { KTToast } from "@keenthemes/ktui";
+
+        window.onload = (event) => {
+            const btn = document.querySelector('#toast_btn');
+            btn.addEventListener('click', () => {
+                KTToast.show({
+                    message: 'This is a basic toast!',
+                });
+            });
+
+            const variants = [
+                'primary',
+                'success',
+                'warning',
+                'destructive',
+                'info',
+                'mono',
+                'secondary',
+            ];
+            variants.forEach((variant) => {
+                const btn = document.getElementById(`toast_variant_${variant}`);
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        KTToast.show({
+                            message: `This is a ${variant} toast!`,
+                            variant,
+                        });
+                    });
+                }
+            });
+        };
+
+    </script>
+
+</body>
+
+</html>

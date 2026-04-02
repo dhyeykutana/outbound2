@@ -1,0 +1,195 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Accordion" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Accordion" }}
+
+                <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Basic Input</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <input type="text" class="kt-input" placeholder="Example input" />
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Disabled Input</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <input type="text" class="kt-input" placeholder="Example input" disabled />
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Readonly Input</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <input type="text" class="kt-input" placeholder="Example input" readonly />
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Textarea</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <textarea class="kt-textarea" placeholder="Text input" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="kt-card mb-4">
+                            <div class="kt-card-header">
+                                <div class="kt-card-title">File Input</div>
+                            </div>
+                            <div class="kt-card-content">
+                                <input type="file" class="kt-input" />
+                            </div>
+                        </div>
+
+                        <div class="kt-card">
+                            <div class="kt-card-header">
+                                <div class="kt-card-title">Error Input</div>
+                            </div>
+                            <div class="kt-card-content">
+                                <input type="text" class="kt-input" placeholder="Example input" aria-invalid="true" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Password Toggle</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="relative" data-kt-toggle-password="true">
+                                <input type="password" class="kt-input pe-10" placeholder="Password" />
+                                <button class="kt-btn kt-btn-icon kt-btn-ghost size-6 absolute end-2 top-1/2 -translate-y-1/2" data-kt-toggle-password-trigger="true">
+                                    <i class="iconify lucide--eye kt-toggle-password-active:hidden"></i>
+                                    <i class="iconify lucide--eye-off hidden kt-toggle-password-active:block"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Input Size</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-5">
+                                <input type="text" class="kt-input kt-input-sm" placeholder="Small" />
+                                <input type="text" class="kt-input" placeholder="Default" />
+                                <input type="text" class="kt-input kt-input-lg" placeholder="Large" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">with Icons Input</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-6">
+                                <div class="kt-input">
+                                    <i class="iconify lucide--mail"></i>
+                                    <input type="text" class="kt-input" placeholder="Email address" />
+                                </div>
+                                <div class="kt-input">
+                                    <input type="text" class="kt-input" placeholder="File name" />
+                                    <i class="iconify lucide--paperclip"></i>
+                                </div>
+                                <div class="kt-input gap-1">
+                                    <button type="button" class="kt-btn kt-btn-xs kt-btn-icon kt-btn-ghost -ms-0.5 size-6" data-kt-tooltip="true">
+                                        <i class="iconify lucide--user"></i>
+                                        <span class="kt-tooltip" data-kt-tooltip-content="true">Loopup for user.</span>
+                                    </button>
+                                    <input type="text" class="kt-input" placeholder="Clickable icon button" />
+                                </div>
+                                <div class="kt-input">
+                                    <input type="text" class="kt-input" placeholder="Clickable icon button" />
+                                    <button type="button" class="kt-btn kt-btn-xs kt-btn-icon kt-btn-ghost -me-1.5 size-6" data-kt-tooltip="true">
+                                        <i class="iconify lucide--download"></i>
+                                        <span class="kt-tooltip" data-kt-tooltip-content="true">Download a file.</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Input Group</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-6">
+                                <div class="kt-input-group">
+                                    <span class="kt-input-addon">Addon</span><input class="kt-input" type="email" placeholder="Start addon" />
+                                </div>
+                                <div class="kt-input-group">
+                                    <input class="kt-input" type="email" placeholder="End addon" /><span class="kt-input-addon">Addon</span>
+                                </div>
+                                <div class="kt-input-group">
+                                    <span class="kt-input-addon kt-input-addon-icon">
+                                        <i class="iconify lucide--dollar-sign"></i>
+                                    </span>
+                                    <input class="kt-input" type="email" placeholder="Start icon addon" />
+                                </div>
+                                <div class="kt-input-group">
+                                    <input class="kt-input" type="email" placeholder="End icon addon" /><span class="kt-input-addon kt-input-addon-icon">
+                                        <i class="iconify lucide--ticket-percent"></i>
+                                    </span>
+                                </div>
+                                <div class="kt-input-group">
+                                    <div class="kt-input-addon kt-input-addon-icon">
+                                        <i class="iconify lucide--mail"></i>
+                                    </div>
+                                    <input type="text" class="kt-input" placeholder="Email address" />
+                                    <button type="button" class="kt-btn kt-btn-outline">Button</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

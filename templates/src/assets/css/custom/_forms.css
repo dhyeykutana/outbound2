@@ -1,0 +1,10 @@
+//
+// forms.scss
+//
+
+
+.kt-checkbox {
+    &:checked {
+        border-color: inherit;
+    }
+}

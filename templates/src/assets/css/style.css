@@ -1,0 +1,43 @@
+
+
+
+
+
+/* Google Font Link */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@import "tailwindcss";
+
+@import "./theme.css"; /* Themes Config */
+
+@import "@keenthemes/ktui/styles.css"; /* ktui css */
+
+/* Structure */
+@import "./structure/_sidenav.css";
+@import "./structure/_topbar.css";
+@import "./structure/_general.css";
+
+
+/* Custome Components */
+@import "./custom/_helper.css";
+@import "./custom/_card.css";
+@import "./custom/_forms.css";
+@import "./custom/_fullcalendar.css";
+
+
+/* Simplebar */
+@import "./custom/_simplebar.css";
+
+
+
+.kt-checkbox {
+    &:checked {
+        border-color: inherit;
+    }
+}
+
+@plugin "@iconify/tailwind4" {
+    prefixes: solar, lucide, tabler, uil;
+}
+    
+

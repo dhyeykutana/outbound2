@@ -1,0 +1,258 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Dropdown" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+
+                    <!-- Basic Usage -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Basic Usage</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-trigger="click">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">
+                                    <i class="iconify lucide--menu mr-2"></i>Show Dropdown
+                                </button>
+                                <div class="kt-dropdown max-w-72 p-3 text-sm" data-kt-dropdown-menu="true">
+                                    The Tailwind Dropdown component offers a sleek, user-friendly interface.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow Indicator -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Arrow Indicator</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div data-kt-dropdown="true" data-kt-dropdown-trigger="click">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">
+                                    <i class="iconify lucide--chevron-down kt-dropdown-open:hidden"></i>
+                                    <i class="iconify lucide--chevron-up hidden kt-dropdown-open:inline"></i>
+                                    Toggle Dropdown
+                                </button>
+                                <div class="kt-dropdown max-w-72 p-3 text-sm" data-kt-dropdown-menu="true">
+                                    Toggle with icon changing on state.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Separator -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">With Separator</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">
+                                    <i class="iconify lucide--list mr-2"></i>Dropdown
+                                </button>
+                                <div class="kt-dropdown max-w-72 text-sm" data-kt-dropdown-menu="true">
+                                    <div class="kt-dropdown-header">Header</div>
+                                    <div class="border-b my-2"></div>
+                                    <div class="kt-dropdown-body">Dropdown content with separator.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Width -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Width Example</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Wide Dropdown</button>
+                                <div class="kt-dropdown max-w-96 p-3" data-kt-dropdown-menu="true">
+                                    Custom width using Tailwind classes (max-w-96).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Scrollable</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-trigger="click">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Show Dropdown</button>
+                                
+                                <div class="kt-dropdown max-w-56 text-sm" data-kt-dropdown-menu="true">
+                                    <div class="kt-dropdown-header">Header</div>
+                                    <div class="kt-dropdown-body kt-scrollable overflow-y-auto pe-2 w-56 h-40">
+                                        <div class="rounded-lg bg-muted w-full grow h-[400px]"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Permanent -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Permanent</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-permanent="true">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Permanent</button>
+                                <div class="kt-dropdown max-w-72 p-3 text-sm" data-kt-dropdown-menu="true">
+                                    Dropdown always open until manually closed.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Placement -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Top Placement</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-placement="top">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Top Dropdown</button>
+                                <div class="kt-dropdown p-3" data-kt-dropdown-menu="true">
+                                    Dropdown opens above.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trigger -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Hover Trigger</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-trigger="hover">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Hover Me</button>
+                                <div class="kt-dropdown p-3" data-kt-dropdown-menu="true">
+                                    Appears on hover.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offset -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Offset</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-offset="20px, 10px">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Offset</button>
+                                <div class="kt-dropdown p-3" data-kt-dropdown-menu="true">
+                                    Positioned with offset.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Menu -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Navigation Menu</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true">Menu</button>
+                                <div class="kt-dropdown p-3 space-y-1" data-kt-dropdown-menu="true">
+                                    <a href="#" class="block">Dashboard</a>
+                                    <a href="#" class="block">Settings</a>
+                                    <a href="#" class="block">Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- With Modal -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">Inside Modal</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#modal_1">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" id="modal_1">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modal_1">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body flex justify-center min-h-60">
+                                            <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-trigger="click">
+                                                <button class="kt-btn" data-kt-dropdown-toggle="true">
+                                                    Show Dropdown
+                                                </button>
+                                                <div class="kt-dropdown w-52 p-3 text-sm" data-kt-dropdown-menu="true">
+                                                    The Tailwind Dropdown component offers a sleek, user-friendly
+                                                    interface for presenting overlay content.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- With Tooltip -->
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h5 class="kt-card-title">With Tooltip</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="inline-flex" data-kt-dropdown="true">
+                                <button class="kt-btn" data-kt-dropdown-toggle="true" data-kt-tooltip="true" data-kt-tooltip-placement="top">
+                                    Hover & Dropdown
+                                    <span class="kt-tooltip" data-kt-tooltip-content="true">Tooltip and dropdown combo</span>
+                                </button>
+                                <div class="kt-dropdown p-3" data-kt-dropdown-menu="true">
+                                    Dropdown with tooltip.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

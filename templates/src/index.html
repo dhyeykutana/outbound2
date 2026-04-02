@@ -1,0 +1,207 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Menu" title="Dashboard" }}
+
+                <div class="grid xl:grid-cols-4 md:grid-cols-2 gap-4 mb-4">
+                    <!-- Revenue Card -->
+                    <div class="kt-card">
+                        <div class="kt-card-content p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">Total Revenue</p>
+                                    <h3 class="text-[1.5rem] font-semibold text-default-900">$124,560</h3>
+                                </div>
+                                <div class="size-12 rounded-full flex items-center justify-center bg-primary/10 text-primary">
+                                    <i class="iconify lucide--bar-chart-2 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Customers Card -->
+                    <div class="kt-card">
+                        <div class="kt-card-content p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">New Customers</p>
+                                    <h3 class="text-[1.5rem] font-semibold text-default-900">3,210</h3>
+                                </div>
+                                <div class="size-12 rounded-full flex items-center justify-center bg-teal-500/10 text-teal-500">
+                                    <i class="iconify lucide--users text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Card -->
+                    <div class="kt-card">
+                        <div class="kt-card-content p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">Orders</p>
+                                    <h3 class="text-[1.5rem] font-semibold text-default-900">982</h3>
+                                </div>
+                                <div class="size-12 rounded-full flex items-center justify-center bg-yellow-500/10 text-yellow-500">
+                                    <i class="iconify lucide--shopping-cart text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Tickets Card -->
+                    <div class="kt-card">
+                        <div class="kt-card-content p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">Support Tickets</p>
+                                    <h3 class="text-[1.5rem] font-semibold text-default-900">118</h3>
+                                </div>
+                                <div class="size-12 rounded-full flex items-center justify-center bg-red-500/10 text-red-500">
+                                    <i class="iconify lucide--life-buoy text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="grid xl:grid-cols-2 gap-4 mb-4">
+                    <div class="kt-card">
+                        <div class="kt-card-content">
+                            <h4 class="kt-card-title mb-4">Total Revenue</h4>
+                            <div id="line-chart" class="morris-chart"></div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-content p-5">
+                            <h4 class="kt-card-title mb-4">Statistics</h4>
+
+                            <!-- Chart Container -->
+                            <div id="revenueChart" class="w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-card">
+                    <div class="kt-card-header">
+                        <h4 class="kt-card-title">Recent Customers</h4>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="table-auto w-full border-collapse">
+                            <thead class="bg-default-100 border-b border-default-200">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Customer</th>
+                                    <th class="px-4 py-2 text-left">Phone</th>
+                                    <th class="px-4 py-2 text-left">Email</th>
+                                    <th class="px-4 py-2 text-left">Location</th>
+                                    <th class="px-4 py-2 text-left">Create Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-default-200">
+                                <tr class="hover:bg-default-50">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <img src="assets/images/users/avatar-4.jpg" alt="table-user" class="size-9 rounded-full">
+                                        <a href="javascript:void(0);" class="font-semibold text-default-800">Paul
+                                            J. Friend</a>
+                                    </td>
+                                    <td class="px-4 py-2">937-330-1634</td>
+                                    <td class="px-4 py-2">pauljfrnd@jourrapide.com</td>
+                                    <td class="px-4 py-2">New York</td>
+                                    <td class="px-4 py-2">07/07/2024</td>
+                                </tr>
+                                <tr class="hover:bg-default-50">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <img src="assets/images/users/avatar-3.jpg" alt="table-user" class="size-9 rounded-full">
+                                        <a href="javascript:void(0);" class="font-semibold text-default-800">Bryan
+                                            J. Luellen</a>
+                                    </td>
+                                    <td class="px-4 py-2">215-302-3376</td>
+                                    <td class="px-4 py-2">bryuellen@dayrep.com</td>
+                                    <td class="px-4 py-2">New York</td>
+                                    <td class="px-4 py-2">09/12/2024</td>
+                                </tr>
+                                <tr class="hover:bg-default-50">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <img src="assets/images/users/avatar-8.jpg" alt="table-user" class="size-9 rounded-full">
+                                        <a href="javascript:void(0);" class="font-semibold text-default-800">Kathryn
+                                            S. Collier</a>
+                                    </td>
+                                    <td class="px-4 py-2">828-216-2190</td>
+                                    <td class="px-4 py-2">collier@jourrapide.com</td>
+                                    <td class="px-4 py-2">Canada</td>
+                                    <td class="px-4 py-2">06/30/2024</td>
+                                </tr>
+                                <tr class="hover:bg-default-50">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <img src="assets/images/users/avatar-1.jpg" alt="table-user" class="size-9 rounded-full">
+                                        <a href="javascript:void(0);" class="font-semibold text-default-800">Timothy
+                                            Kauper</a>
+                                    </td>
+                                    <td class="px-4 py-2">(216) 75 612 706</td>
+                                    <td class="px-4 py-2">thykauper@rhyta.com</td>
+                                    <td class="px-4 py-2">Denmark</td>
+                                    <td class="px-4 py-2">09/08/2024</td>
+                                </tr>
+                                <tr class="hover:bg-default-50">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <img src="assets/images/users/avatar-5.jpg" alt="table-user" class="size-9 rounded-full">
+                                        <a href="javascript:void(0);" class="font-semibold text-default-800">Zara
+                                            Raws</a>
+                                    </td>
+                                    <td class="px-4 py-2">(02) 75 150 655</td>
+                                    <td class="px-4 py-2">austin@dayrep.com</td>
+                                    <td class="px-4 py-2">Germany</td>
+                                    <td class="px-4 py-2">07/15/2024</td>
+                                </tr>
+                                <tr class="hover:bg-default-50">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <img src="assets/images/users/avatar-6.jpg" alt="table-user" class="size-9 rounded-full">
+                                        <a href="javascript:void(0);" class="font-semibold text-default-800">Mike
+                                            John</a>
+                                    </td>
+                                    <td class="px-4 py-2">798-4651-455</td>
+                                    <td class="px-4 py-2">mikejohn@jourrapide.com</td>
+                                    <td class="px-4 py-2">New York</td>
+                                    <td class="px-4 py-2">08/07/2024</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- end card-->
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+    <script src="assets/js/pages/dashboard.js" type="module"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Collapse" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Default Collapse</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-2.5">
+                                <button class="kt-btn" data-kt-collapse="#collapse_content" aria-expanded="false" aria-controls="collapse_content" id="collapse_toggle">
+                                    Collapse
+                                    <i class="iconify lucide--chevron-down kt-collapse-active:hidden size-4"></i>
+                                    <i class="iconify lucide--chevron-up kt-collapse-active:block hidden size-4"></i>
+                                </button>
+                                <div class="transition-[height] duration-300 hidden" id="collapse_content" aria-labelledby="collapse_toggle">
+                                    Centralize your team information with our management tools. Access detailed
+                                    instructions, expert advice, and technical documentation to maintain an
+                                    up-to-date team directory
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Show/Hide</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="w-full max-w-[75%]">
+                                <div class="mb-2.5">
+                                    Centralize your team information with our management tools. Access detailed
+                                    instructions, expert advice, and technical documentation to maintain an
+                                    up-to-date team directory.
+                                </div>
+                                <div class="transition-[height] duration-300 hidden" id="showhide_collapse_content" aria-labelledby="collapse_toggle">
+                                    <divfil class="mb-2.5">
+                                        This is a collapse content hidden by default and show on the show more link click.
+                                    </div>
+                                </div>
+
+                                <button type="button" class="kt-link kt-link-underline" data-kt-collapse="#showhide_collapse_content" aria-expanded="false" aria-controls="showhide_collapse_content" id="collapse_toggle">
+                                    <span class="inline-flex items-center gap-1 kt-collapse-active:hidden">Show more
+                                        <i class="iconify lucide--chevron-down kt-collapse-active:hidden size-4"></i>
+                                    </span>
+                                    <span class="hidden items-center gap-1 kt-collapse-active:inline-flex">Hide
+                                        <i class="iconify lucide--chevron-up kt-collapse-active:block hidden size-4"></i>
+                                    </span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

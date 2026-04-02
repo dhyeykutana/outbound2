@@ -1,0 +1,272 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Forms" title="Input" }}
+
+                <div class="grid lg:grid-cols-2 gap-4 mb-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Checkbox</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="checkbox" class="kt-checkbox" id="checkDefault" value="1" />
+                                <label class="kt-label" for="checkDefault">Accept terms and conditions</label>
+                            </div>
+
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="checkbox" class="kt-checkbox" id="checked" checked value="1" />
+                                <label class="kt-label" for="checked">Accept terms and conditions</label>
+                            </div>
+
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="checkbox" class="kt-checkbox" disabled id="checkDisabled" checked value="1" />
+                                <label class="kt-label" for="checkDisabled">Accept terms and conditions</label>
+                            </div>
+
+
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="checkbox" class="kt-checkbox" id="indeterminate" value="1" />
+                                <label class="kt-label" for="indeterminate">Accept terms and conditions</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Checkbox</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="kt-checkbox checked:bg-primary" id="checkPrimary" value="Primary" checked />
+                                    <label class="kt-label" for="checkPrimary">Primary</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="kt-checkbox checked:bg-destructive" id="checkDestructive" value="Destructive" checked />
+                                    <label class="kt-label" for="checkDestructive">Destructive</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="kt-checkbox kt-checkbox-mono" id="checkMono" value="Mono" checked />
+                                    <label class="kt-label" for="checkMono">Mono</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Checkbox</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="check_1" checked="" value="1" />
+                                    <label class="kt-label" for="check_1">Small</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="kt-checkbox" id="check_2" checked="" value="1" />
+                                    <label class="kt-label" for="check_2">Default</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="kt-checkbox kt-checkbox-lg" id="check_3" checked="" value="1" />
+                                    <label class="kt-label" for="check_3">Large</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-4 mb-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Radio</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="grid gap-2.5">
+                                <div class="flex items-center gap-2.5">
+                                    <input type="radio" class="kt-radio" id="radio_1" name="level" value="1" />
+                                    <label class="kt-label" for="radio_1">Beginner</label>
+                                </div>
+                                <div class="flex items-center gap-2.5">
+                                    <input type="radio" class="kt-radio" id="radio_2" name="level" checked="" value="2" />
+                                    <label class="kt-label" for="radio_2">Intermediate</label>
+                                </div>
+                                <div class="flex items-center gap-2.5">
+                                    <input type="radio" class="kt-radio" id="radio_3" name="level" value="3" />
+                                    <label class="kt-label" for="radio_3">Beginner</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Checkbox</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="grid gap-2.5">
+                                <div class="flex items-center gap-2.5">
+                                    <input type="radio" class="kt-radio" id="radioBeginner" name="levelTwo" value="1" />
+                                    <label class="kt-label" for="radioBeginner">Beginner</label>
+                                </div>
+                                <div class="flex items-center gap-2.5">
+                                    <input type="radio" class="kt-radio" id="radioIntermediate" name="levelTwo" checked="" value="2" />
+                                    <label class="kt-label" for="radioIntermediate">Intermediate</label>
+                                </div>
+                                <div class="flex items-center gap-2.5">
+                                    <input type="radio" class="kt-radio" disabled id="radioDisabled" name="levelTwo" value="3" />
+                                    <label class="kt-label" for="radioDisabled">Beginner</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Checkbox</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" class="kt-radio kt-radio-sm" id="check_1" checked="" value="1" />
+                                    <label class="kt-label" for="check_1">Small</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" class="kt-radio" id="check_2" checked="" value="1" />
+                                    <label class="kt-label" for="check_2">Default</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" class="kt-radio kt-radio-lg" id="check_3" checked="" value="1" />
+                                    <label class="kt-label" for="check_3">Large</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Checkbox</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-2">
+                                    <input class="kt-switch" type="checkbox" id="switch" />
+                                    <label class="kt-label" for="switch">Auto update</label>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <input class="kt-switch kt-switch-mono" type="checkbox" id="switchChecked" checked />
+                                    <label class="kt-label" for="switchChecked">Checked</label>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <input class="kt-switch kt-switch-mono" type="checkbox" id="switchDisabled" disabled checked />
+                                    <label class="kt-label" for="switchDisabled">Disabled</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Error</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex items-center gap-2">
+                                <input class="kt-switch" type="checkbox" aria-invalid="true" id="switchError" />
+                                <label class="kt-label" for="switchError">Auto update</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="flex justify-between items-center">
+                                <h4 class="kt-card-title">Size</h4>
+                            </div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="space-y-3">
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="kt-switch kt-switch-sm" id="switch_1" checked="" value="1" />
+                                        <label class="kt-label" for="switch_1">Small</label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="kt-switch" id="switch_2" checked="" value="1" />
+                                        <label class="kt-label" for="switch_2">Default</label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" class="kt-switch kt-switch-lg" id="switch_3" checked="" value="1" />
+                                        <label class="kt-label" for="switch_3">Large</label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+    <script>
+        window.onload = (event) => {
+            const checkboxEl = document.querySelector('#indeterminate');
+            checkboxEl.indeterminate = true;
+        };
+    </script>
+
+</body>
+
+</html>

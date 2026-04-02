@@ -1,0 +1,47 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Contacts" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Menu" title="Contacts" }}
+
+
+                <div class="kt-card">
+                    <div class="kt-card-content">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+    <script src="assets/js/pages/calendar.js" type="module"></script>
+
+</body>
+
+</html>

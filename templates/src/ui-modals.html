@@ -1,0 +1,465 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Modal" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Modal" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Example</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#modal">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" id="modal">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[200px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">with Footer</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#footerModal">Show Modal</button>
+
+                                <div class="kt-modal" data-kt-modal="true" id="footerModal">
+                                    <div class="kt-modal-content max-w-[400px] top-[5%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#footerModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[200px]"></div>
+                                        </div>
+                                        <div class="kt-modal-footer">
+                                            <div></div>
+                                            <div class="flex gap-4">
+                                                <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#footerModal">Cancel</button>
+                                                <button class="kt-btn">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Center Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#centerModal">Show Modal</button>
+                                <div class="kt-modal kt-modal-center" data-kt-modal="true" id="centerModal">
+                                    <div class="kt-modal-content max-w-[400px]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#centerModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[200px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Scrollable Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#scrollableModal">Show Modal</button>
+
+                                <div class="kt-modal" data-kt-modal="true" id="scrollableModal">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#scrollableModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body max-h-[200px] pe-2">
+                                            <div class="rounded-lg bg-muted w-full grow h-[600px]"></div>
+                                        </div>
+                                        <div class="kt-modal-footer gap-2.5 justify-end">
+                                            <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#scrollableModal">Cancel</button>
+                                            <button class="kt-btn">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Long Content Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#longContentModal">Show Modal</button>
+
+                                <div class="kt-modal kt-modal-center" data-kt-modal="true" id="longContentModal">
+                                    <div class="kt-modal-content max-w-[400px] max-h-[70%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#longContentModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[600px]"></div>
+                                        </div>
+                                        <div class="kt-modal-footer">
+                                            <div class="flex gap-4">
+                                                <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#longContentModal">Cancel</button>
+                                                <button class="kt-btn">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Static Backdrop Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#staticBackdropModal">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" data-kt-modal-backdrop-static="true" id="staticBackdropModal">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#staticBackdropModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[200px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">No Backdrop Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-2">
+                                <button class="kt-btn" data-kt-modal-toggle="#noBackdropModal">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" data-kt-modal-backdrop="false" id="noBackdropModal">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#noBackdropModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[200px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="kt-btn" data-kt-modal-toggle="#persistentBackdropModal">Show Modal</button>
+
+                                <div class="kt-modal kt-modal-fit kt-modal-center max-w-[400px]" data-kt-modal="true" data-kt-modal-backdrop="false" data-kt-modal-persistent="true" id="persistentBackdropModal">
+                                    <div class="kt-modal-content">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#persistentBackdropModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[200px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Toggle Modals</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#modal_one">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" id="modal_one">
+                                    <div class="kt-modal-content max-w-[300px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modal_one">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[250px]"></div>
+                                        </div>
+                                        <div class="kt-modal-footer">
+                                            <button type="button" class="kt-btn" data-kt-modal-toggle="#modal_two">
+                                                Launch Another Modal
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="kt-modal" data-kt-modal="true" id="modal_two">
+                                    <div class="kt-modal-content max-w-[400px] top-[5%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modal_two">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[250px]"></div>
+                                        </div>
+                                        <div class="kt-modal-footer">
+                                            <button type="button" class="kt-btn" data-kt-modal-toggle="#modal_one">
+                                                Launch Previous Modal
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Input Auto-focus Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#inputAutoFocusModal">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" id="inputAutoFocusModal">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#inputAutoFocusModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <input type="text" data-kt-modal-input-focus="true" class="kt-input" placeholder="Modal input..." />
+                                            <div class="rounded-lg bg-muted w-full grow mt-5 h-[175px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Page Scroll Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#pageScrollModal">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" data-kt-modal-disable-scroll="false" id="pageScrollModal">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#pageScrollModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[250px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Full Width Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#fullWidthModal">Show Modal</button>
+                                <div class="kt-modal kt-modal-center" data-kt-modal="true" id="fullWidthModal">
+                                    <div class="kt-modal-content">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#fullWidthModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[600px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Overlay Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-modal-toggle="#overlayModal">Show Modal</button>
+                                <div class="kt-modal" data-kt-modal="true" id="overlayModal">
+                                    <div class="kt-modal-content h-full">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#overlayModal">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body pe-2">
+                                            <div class="rounded-lg bg-muted w-full grow h-[900px]"></div>
+                                        </div>
+                                        <div class="kt-modal-footer justify-end">
+                                            <div class="flex gap-4">
+                                                <button class="kt-btn kt-btn-secondary" data-kt-modal-dismiss="#modal">Cancel</button>
+                                                <button class="kt-btn">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Sizes Modal</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div class="flex gap-4">
+                                <button class="kt-btn" data-kt-modal-toggle="#modalSmall">Small</button>
+                                <button class="kt-btn" data-kt-modal-toggle="#modalMedium">Medium</button>
+                                <button class="kt-btn" data-kt-modal-toggle="#modalLarge">Large</button>
+                                <div class="kt-modal" data-kt-modal="true" id="modalSmall">
+                                    <div class="kt-modal-content max-w-[300px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modalSmall">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[250px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="kt-modal" data-kt-modal="true" id="modalMedium">
+                                    <div class="kt-modal-content max-w-[400px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modalMedium">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[250px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="kt-modal" data-kt-modal="true" id="modalLarge">
+                                    <div class="kt-modal-content max-w-[500px] top-[10%]">
+                                        <div class="kt-modal-header">
+                                            <h3 class="kt-modal-title">Modal Title</h3>
+                                            <button type="button" class="kt-modal-close" aria-label="Close modal" data-kt-modal-dismiss="#modalLarge">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="kt-modal-body">
+                                            <div class="rounded-lg bg-muted w-full grow h-[250px]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

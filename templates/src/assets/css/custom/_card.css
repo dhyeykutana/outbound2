@@ -1,0 +1,11 @@
+.kt-card {
+    @apply h-fit relative border-0 shadow;
+}
+
+.kt-card-header {
+    @apply border-dashed;
+}
+
+.kt-badge {
+    @apply font-semibold;
+}

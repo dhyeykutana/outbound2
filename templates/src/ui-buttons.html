@@ -1,0 +1,176 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Button" }}
+
+                <div class="grid 2xl:grid-cols-2 grid-cols-1 gap-5">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Default Buttons</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <button type="button" class="kt-btn">Primary</button>
+                                <button type="button" class="kt-btn kt-btn-secondary">Secondary</button>
+                                <button type="button" class="kt-btn kt-btn-destructive">Destructive</button>
+                                <button type="button" class="kt-btn kt-btn-mono">Mono</button>
+                                <button type="button" class="kt-btn kt-btn-outline">Outline</button>
+                                <button type="button" class="kt-btn kt-btn-ghost">Ghost</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Rounded Button</h4>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button type="button" class="kt-btn rounded-full">Primary</button>
+                                <button type="button" class="kt-btn kt-btn-secondary rounded-full">Secondary</button>
+                                <button type="button"
+                                    class="kt-btn kt-btn-destructive rounded-full">Destructive</button>
+                                <button type="button" class="kt-btn kt-btn-mono rounded-full">Mono</button>
+                                <button type="button"
+                                    class="kt-btn kt-btn-primary kt-btn-outline rounded-full">Outline</button>
+                                <button type="button"
+                                    class="kt-btn kt-btn-primary kt-btn-ghost rounded-full">Ghost</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Otline Buttons</h4>
+                        </div>
+
+                        <div class="kt-card-content">
+
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button type="button" class="kt-btn kt-btn-outline">Default</button>
+                                <button type="button" class="kt-btn kt-btn-primary kt-btn-outline">Primary</button>
+                                <button type="button" class="kt-btn kt-btn-destructive kt-btn-outline">Destructive</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Outline Rounded Buttons</h4>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button type="button" class="kt-btn kt-btn-outline rounded-full">Default</button>
+                                <button type="button" class="kt-btn kt-btn-primary kt-btn-outline rounded-full">Primary</button>
+                                <button type="button" class="kt-btn kt-btn-destructive kt-btn-outline rounded-full">Destructive</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Ghost Buttons</h4>
+                        </div>
+
+                        <div class="kt-card-content">
+
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button type="button" class="kt-btn kt-btn-ghost">Default</button>
+                                <button type="button" class="kt-btn kt-btn-primary kt-btn-ghost">Primary</button>
+                                <button type="button" class="kt-btn kt-btn-destructive kt-btn-ghost">Destructive</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Ghost Rounded Buttons</h4>
+                        </div>
+
+                        <div class="kt-card-content">
+
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button type="button" class="kt-btn kt-btn-ghost rounded-full">Default</button>
+                                <button type="button" class="kt-btn kt-btn-primary kt-btn-ghost rounded-full">Primary</button>
+                                <button type="button" class="kt-btn kt-btn-destructive kt-btn-ghost rounded-full">Destructive</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Sizes</h4>
+                        </div>
+
+                        <div class="kt-card-content">
+
+                            <div class="flex items-start gap-2">
+                                <button type="button" class="kt-btn kt-btn-sm">Small</button>
+                                <button type="button" class="kt-btn">Large</button>
+                                <button type="button" class="kt-btn kt-btn-lg">Default</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <h4 class="kt-card-title">Buttons with Icon</h4>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div class="flex flex-wrap gap-3">
+                                <div class="flex flex-wrap gap-4">
+                                    <button type="button" class="kt-btn">
+                                        <i class="iconify lucide--settings"></i>Primary
+                                    </button>
+
+                                    <button type="button" class="kt-btn kt-btn-secondary">
+                                        <i class="iconify lucide--settings"></i>Primary
+                                    </button>
+
+                                    <button type="button" class="kt-btn kt-btn-destructive">
+                                        <i class="iconify lucide--settings"></i>Primary
+                                    </button>
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

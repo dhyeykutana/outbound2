@@ -1,0 +1,258 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Dashboard" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Modal" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Drawer from Left Side</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-drawer-toggle="#drawer">Show Drawer</button>
+                                <div class="kt-drawer kt-drawer-start hidden w-56" data-kt-drawer="true" id="drawer">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">
+                                        Drawer content
+                                    </div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">with Directions</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="flex items-center gap-4">
+                                <button class="kt-btn" data-kt-drawer-toggle="#drawer_1">
+                                    <i class="iconify lucide--move-right"></i>
+                                    Start
+                                </button>
+
+                                <div class="kt-drawer kt-drawer-start hidden w-56" data-kt-drawer="true" id="drawer_1">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+
+
+                                <button class="kt-btn" data-kt-drawer-toggle="#drawer_2">
+                                    <i class="iconify lucide--move-up"></i>
+                                    Top
+                                </button>
+
+                                <div class="kt-drawer kt-drawer-top hidden h-80" data-kt-drawer="true" id="drawer_2">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+
+
+                                <button class="kt-btn" data-kt-drawer-toggle="#drawer_3">
+                                    <i class="iconify lucide--move-down"></i>
+                                    Bottom
+                                </button>
+
+                                <div class="kt-drawer kt-drawer-bottom hidden h-80" data-kt-drawer="true" id="drawer_3">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+
+
+                                <button class="kt-btn" data-kt-drawer-toggle="#drawer_4">
+                                    <i class="iconify lucide--move-left"></i>
+                                    End
+                                </button>
+
+                                <div class="kt-drawer kt-drawer-end hidden w-56" data-kt-drawer="true" id="drawer_4">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Scrollable Drawer</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <div>
+                                    <button class="kt-btn" data-kt-drawer-toggle="#scrollableDrawer">Show Drawer</button>
+                                    <div class="kt-drawer kt-drawer-start hidden w-60" data-kt-drawer="true" id="scrollableDrawer">
+                                        <div class="kt-drawer-header">
+                                            <h3 class="kt-drawer-title">Drawer Title</h3>
+                                            <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                                <i class="iconify lucide--x"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="kt-drawer-content kt-scrollable">
+                                            <div class="rounded-lg bg-muted w-full grow h-[900px]"></div>
+                                        </div>
+
+                                        <div class="kt-drawer-footer">Footer</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">No Backdrop</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-drawer-toggle="#noBackdrop">Show Drawer</button>
+                                <div class="kt-drawer kt-drawer-start hidden w-56" data-kt-drawer="true" data-kt-drawer-backdrop="false" id="noBackdrop">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Toggle Drawers</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-drawer-toggle="#drawer_one">
+                                    Show drawer
+                                </button>
+                                <div class="kt-drawer kt-drawer-start hidden w-56" data-kt-drawer="true" id="drawer_one">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">
+                                        <button class="kt-btn" data-kt-drawer-toggle="#drawer_two">
+                                            Show another drawer
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="kt-drawer kt-drawer-end hidden w-56" data-kt-drawer="true" id="drawer_two">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">
+                                        <button class="kt-btn" data-kt-drawer-toggle="#drawer_one">
+                                            Show first drawer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Page Scroll</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div>
+                                <button class="kt-btn" data-kt-drawer-toggle="#pageScroll">Show Drawer</button>
+                                <div class="kt-drawer kt-drawer-start hidden w-56" data-kt-drawer="true" data-kt-drawer-disable-scroll="false" id="pageScroll">
+                                    <div class="kt-drawer-header">
+                                        <h3 class="kt-drawer-title">Drawer Title</h3>
+                                        <button class="kt-drawer-close" aria-label="Close drawer" data-kt-drawer-dismiss="#alert">
+                                            <i class="iconify lucide--x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="kt-drawer-content kt-scrollable">Drawer content</div>
+                                    <div class="kt-drawer-footer">Footer</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

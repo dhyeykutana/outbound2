@@ -1,0 +1,33 @@
+/* //
+// _sidenav.scss
+// */
+
+
+html {
+    @apply scroll-smooth relative;
+}
+
+body {
+    @apply font-body;
+    @apply antialiased overflow-x-hidden font-normal text-sm leading-normal bg-default-50 text-default-600 min-h-screen;
+}
+
+code {
+    @apply text-primary;
+}
+
+.text-muted {
+    @apply text-default-400;
+}
+
+.wrapper {
+    @apply flex flex-col;
+}
+
+.page-content {
+    @apply flex flex-col flex-grow h-screen;
+
+    main {
+        @apply flex-grow w-full px-6 py-6;
+    }
+}

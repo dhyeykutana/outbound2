@@ -1,0 +1,3370 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <title>Calyxr Outbound Intelligence Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Apply saved theme BEFORE CSS loads to prevent flash of wrong theme -->
+    <script>
+        (function(){
+            var t = localStorage.getItem('calyxr-theme') || 'light';
+            if (t === 'dark') document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <!-- Skotwind Compiled Assets -->
+    <link rel="shortcut icon" href="/dist/assets/favicon-xjZiSbFJ.ico">
+    <!-- Entry point: initialises all KT components (dropdowns, drawers, etc.) -->
+    <script type="module" crossorigin src="/dist/assets/index-DH5hG_Qd.js"></script>
+    <link rel="modulepreload" crossorigin href="/dist/assets/app-DGIWZ3XT.js">
+    <link rel="stylesheet" crossorigin href="/dist/assets/app-CcqiiIcy.css">
+
+    <style>
+        /* ── Terminal / Log Area ─────────────────────────── */
+        #log-terminal {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: .78rem; line-height: 1.6;
+            height: 300px; overflow-y: auto;
+            padding: 1rem; background: #0f172a;
+            color: #94a3b8; border-radius: .5rem;
+        }
+        #log-terminal .ln-header  { color: #38bdf8; font-weight: 600; }
+        #log-terminal .ln-step    { color: #a5f3fc; }
+        #log-terminal .ln-success { color: #4ade80; }
+        #log-terminal .ln-error   { color: #f87171; }
+        #log-terminal .ln-skip    { color: #fbbf24; }
+        #log-terminal .ln-complete{ color: #a78bfa; font-weight: 600; }
+        #log-terminal .ln-ping    { color: #475569; }
+
+        /* ── Table Cell Truncation ───────────────────────── */
+        .cell-truncate {
+            max-width: 200px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+        }
+
+        /* ── Status Badge ────────────────────────────────── */
+        .s-badge { display:inline-flex; align-items:center; gap:.375rem; padding:.25rem .75rem; border-radius:9999px; font-size:.78rem; font-weight:600; border:1px solid; }
+        .s-badge .dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+        .s-badge.s-idle     { background:rgba(100,116,139,.1); border-color:rgba(100,116,139,.3); color:#64748b; }
+        .s-badge.s-idle     .dot { background:#64748b; }
+        .s-badge.s-running  { background:rgba(34,197,94,.08); border-color:rgba(34,197,94,.3); color:#16a34a; }
+        .s-badge.s-running  .dot { background:#22c55e; animation:pulse-dot 1s infinite; }
+        .s-badge.s-complete { background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.3); color:#6366f1; }
+        .s-badge.s-complete .dot { background:#6366f1; }
+        .s-badge.s-error    { background:rgba(239,68,68,.08); border-color:rgba(239,68,68,.3); color:#ef4444; }
+        .s-badge.s-error    .dot { background:#ef4444; }
+        @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+        /* ── Theme toggle ────────────────────────────────── */
+        .theme-btn-text { font-size: 1rem; line-height: 1; }
+
+        /* ── Overlay Modal ───────────────────────────────── */
+        .overlay-modal { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); }
+        .overlay-modal.open { display:flex; align-items:center; justify-content:center; }
+
+        /* ── Logs Modal ──────────────────────────────────── */
+        #logs-modal-box { width:90%; max-width:920px; max-height:88vh; display:flex; flex-direction:column; border-radius:.75rem; overflow:hidden; }
+        #logs-content { flex:1; overflow-y:auto; font-family:'Courier New',Courier,monospace; font-size:.74rem; line-height:1.75; padding:1rem; background:#0f172a; color:#94a3b8; }
+        .log-INFO    { color:#7dd3fc; }
+        .log-DEBUG   { color:#94a3b8; }
+        .log-WARNING { color:#fbbf24; }
+        .log-ERROR   { color:#f87171; }
+        .log-CRITICAL{ color:#f43f5e; font-weight:700; }
+
+        /* ── Cell Modal ──────────────────────────────────── */
+        #cell-modal-box { width:90%; max-width:640px; max-height:80vh; overflow-y:auto; border-radius:.75rem; padding:1.5rem; }
+
+        /* ── Config / Settings Modals ────────────────────── */
+        #config-modal-box    { width:90%; max-width:520px; border-radius:.75rem; overflow:hidden; }
+        #ps-modal-box        { width:90%; max-width:460px; border-radius:.75rem; overflow:hidden; }
+        #add-user-modal-box  { width:90%; max-width:480px; border-radius:.75rem; overflow:hidden; }
+        #chpw-modal-box      { width:90%; max-width:440px; border-radius:.75rem; overflow:hidden; }
+
+        /* ── Tab active ──────────────────────────────────── */
+        .col-tab.active, .hist-tab.active, .log-lvl-btn.active {
+            background:rgba(99,102,241,.12) !important;
+            color:#6366f1 !important; border-color:rgba(99,102,241,.4) !important;
+        }
+
+        /* ── Slider + Form ───────────────────────────────── */
+        input[type=range] { accent-color:#6366f1; }
+        .cfg-label { display:block; font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.35rem; }
+
+        /* ── Prompt Textarea ─────────────────────────────── */
+        .prompt-ta {
+            width:100%; border-radius:.5rem;
+            border:1px solid var(--kt-default-200, #e2e8f0);
+            background:var(--kt-default-50, #f8fafc);
+            padding:.75rem; font-family:'Courier New',Courier,monospace;
+            font-size:.72rem; color:var(--kt-default-700, #374151);
+            line-height:1.6; resize:vertical;
+            transition:border-color .15s, box-shadow .15s;
+        }
+        .prompt-ta:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+
+        /* ── Inline SVG icon helpers ─────────────────────── */
+        .icon-svg { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+        /* ── User avatar initials circles ────────────────── */
+        #user-avatar-circle,
+        #dd-avatar-circle { font-size:.75rem; font-weight:700; letter-spacing:.03em; user-select:none; }
+
+        /* ── User dropdown polish ─────────────────────────── */
+        .kt-dropdown[data-kt-dropdown-menu] { box-shadow:0 8px 24px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.06); border-radius:.75rem; border:1px solid var(--border-color,#e2e8f0); }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+<!-- ════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════ -->
+<aside class="sidenav lg:[--kt-drawer-enable:false]"
+       data-kt-drawer="true"
+       data-kt-drawer-class="kt-drawer kt-drawer-start hidden"
+       id="sidenavDrawer">
+
+    <div class="kt-drawer-header border-b-0 h-topbar">
+        <a href="#" onclick="showPanel('pipeline');return false;" class="flex items-center gap-2">
+            <span id="sidebar-brand" class="font-bold text-lg text-default-900 dark:text-white">Calyxr</span>
+        </a>
+    </div>
+
+    <div class="kt-drawer-content kt-scrollable h-[calc(100%-theme('spacing.topbar'))]" data-simplebar>
+        <ul data-kt-accordion="true" class="kt-accordion-menu">
+
+            <!-- ── Outbound (always visible) ─────────────── -->
+            <li class="px-3 py-2 text-xs uppercase font-medium text-default-500">Outbound</li>
+
+            <li class="kt-accordion-menu-item active nav-panel-li" id="nav-li-pipeline" data-kt-accordion-item="true">
+                <a href="#" class="kt-accordion-menu-link nav-panel-link"
+                   onclick="showPanel('pipeline');return false;">
+                    <i class="iconify lucide--monitor-dot kt-accordion-menu-icon"></i>
+                    <span>Pipeline Dashboard</span>
+                </a>
+            </li>
+
+            <li class="kt-accordion-menu-item nav-panel-li" id="nav-li-history" data-kt-accordion-item="true">
+                <a href="#" class="kt-accordion-menu-link nav-panel-link"
+                   onclick="showPanel('history');return false;">
+                    <i class="iconify uil--table kt-accordion-menu-icon"></i>
+                    <span>Run History</span>
+                </a>
+            </li>
+
+            <li class="kt-accordion-menu-item nav-panel-li" id="nav-li-campaigns" data-kt-accordion-item="true">
+                <a href="#" class="kt-accordion-menu-link nav-panel-link"
+                   onclick="showPanel('campaigns');return false;">
+                    <i class="iconify lucide--mail kt-accordion-menu-icon"></i>
+                    <span>Campaigns</span>
+                </a>
+            </li>
+
+            <!-- ── AI Agents (admin+ only) ────────────────── -->
+            <li id="nav-section-agents" style="display:none">
+                <ul>
+                    <li class="px-3 py-2 text-xs uppercase font-medium text-default-500">AI Agents</li>
+                    <li class="kt-accordion-menu-item nav-panel-li" id="nav-li-prompts" data-kt-accordion-item="true">
+                        <a href="#" class="kt-accordion-menu-link nav-panel-link"
+                           onclick="showPanel('prompts');return false;">
+                            <i class="iconify lucide--file-text kt-accordion-menu-icon"></i>
+                            <span>Edit Agent Prompts</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- ── Tools (always visible) ────────────────── -->
+            <li class="px-3 py-2 text-xs uppercase font-medium text-default-500">Tools</li>
+
+            <li id="nav-li-logs" class="kt-accordion-menu-item" style="display:none" data-kt-accordion-item="true">
+                <a href="#" class="kt-accordion-menu-link" onclick="openLogsModal();return false;">
+                    <i class="iconify tabler--file-text kt-accordion-menu-icon"></i>
+                    <span>Activity Logs</span>
+                </a>
+            </li>
+
+            <li class="kt-accordion-menu-item" id="nav-li-export" style="display:none" data-kt-accordion-item="true">
+                <a href="#" onclick="exportCSV();return false;" class="kt-accordion-menu-link">
+                    <i class="iconify lucide--download kt-accordion-menu-icon"></i>
+                    <span>Export Results</span>
+                </a>
+            </li>
+
+            <!-- ── Settings (admin+ only) ─────────────────── -->
+            <li id="nav-section-settings" style="display:none">
+                <ul>
+                    <li class="px-3 py-2 text-xs uppercase font-medium text-default-500">Settings</li>
+                    <li class="kt-accordion-menu-item" data-kt-accordion-item="true">
+                        <a href="#" class="kt-accordion-menu-link" onclick="openConfigModal();return false;">
+                            <i class="iconify lucide--settings kt-accordion-menu-icon"></i>
+                            <span>Edit App Info</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- ── Admin (super_admin only) ───────────────── -->
+            <li id="nav-section-admin" style="display:none">
+                <ul>
+                    <li class="px-3 py-2 text-xs uppercase font-medium text-default-500">Admin</li>
+                    <li class="kt-accordion-menu-item nav-panel-li" id="nav-li-users" data-kt-accordion-item="true">
+                        <a href="#" class="kt-accordion-menu-link nav-panel-link"
+                           onclick="showPanel('users');return false;">
+                            <i class="iconify lucide--users kt-accordion-menu-icon"></i>
+                            <span>User Management</span>
+                        </a>
+                    </li>
+                    <li class="kt-accordion-menu-item nav-panel-li" id="nav-li-roles" style="display:none" data-kt-accordion-item="true">
+                        <a href="#" class="kt-accordion-menu-link nav-panel-link"
+                           onclick="showPanel('roles');return false;">
+                            <svg class="kt-accordion-menu-icon" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 style="width:1.25em;height:1.25em;display:inline-block;vertical-align:middle;flex-shrink:0">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                            <span>Roles &amp; Permissions</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</aside>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PAGE CONTENT
+════════════════════════════════════════════════════════ -->
+<div class="page-content">
+
+    <!-- ── Topbar ──────────────────────────────────────── -->
+    <div id="topbar" class="app-header min-h-topbar flex items-center sticky top-0 z-30 bg-card shadow">
+        <div class="px-6 w-full flex items-center">
+            <div class="w-full flex items-center justify-between gap-4">
+                <div class="flex items-center gap-5">
+                    <button class="kt-btn lg:hidden" data-kt-drawer-toggle="#sidenavDrawer">
+                        <i class="iconify lucide--align-left text-2xl"></i>
+                    </button>
+                    <span id="topbar-brand-mobile" class="md:hidden font-bold text-default-900">Calyxr</span>
+                    <h5 id="topbar-title" class="md:flex hidden text-default-900 font-semibold text-sm">
+                        Calyxr Outbound Intelligence Engine
+                    </h5>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="status-badge" class="s-badge s-idle">
+                        <span class="dot"></span>
+                        <span id="status-label">Idle</span>
+                    </span>
+
+                    <!-- Config button — admin+ only (hidden by default, shown by applyRBAC) -->
+                    <button id="topbar-config-btn" onclick="openConfigModal()" style="display:none"
+                            class="p-2 rounded-lg bg-card border border-default-200 hover:bg-primary/15 hover:text-primary transition-all"
+                            title="Edit App Info">
+                        <i class="iconify lucide--settings text-xl"></i>
+                    </button>
+
+                    <button id="theme-toggle"
+                            class="p-2 rounded-lg bg-card border border-default-200 hover:bg-primary/15 hover:text-primary transition-all"
+                            title="Toggle theme">
+                        <span id="theme-icon" class="theme-btn-text">🌙</span>
+                    </button>
+
+                    <button id="topbar-logs-btn" onclick="openLogsModal()" style="display:none"
+                            class="p-2 rounded-lg bg-card border border-default-200 hover:bg-primary/15 hover:text-primary transition-all"
+                            title="Activity Logs">
+                        <i class="iconify tabler--file-text text-xl"></i>
+                    </button>
+
+                    <!-- User dropdown -->
+                    <div class="inline-flex" data-kt-dropdown="true" data-kt-dropdown-trigger="click" data-kt-dropdown-placement="bottom-end">
+                        <button class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-default-100 transition-all cursor-pointer"
+                                data-kt-dropdown-toggle="true" title="Account">
+                            <div id="user-avatar-circle"
+                                 class="size-8 rounded-full flex items-center justify-center font-bold text-xs select-none"
+                                 style="background:#6366f1;color:#fff;box-shadow:0 2px 6px rgba(99,102,241,.35);outline:2px solid rgba(99,102,241,.2);outline-offset:1px;">
+                                —
+                            </div>
+                            <span id="topbar-user-name" class="hidden md:block text-sm font-medium text-default-700 max-w-28 truncate">—</span>
+                            <svg aria-hidden="true" class="hidden md:block" style="width:13px;height:13px;color:#94a3b8;flex-shrink:0"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="kt-dropdown w-60 text-sm overflow-hidden" style="padding:0" data-kt-dropdown-menu="true">
+                            <!-- Header -->
+                            <div class="px-4 py-3 border-b border-default-100" style="background:var(--tw-bg-opacity,1)">
+                                <div class="flex items-center gap-3">
+                                    <div id="dd-avatar-circle"
+                                         class="size-9 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0 select-none"
+                                         style="background:#6366f1;color:#fff;box-shadow:0 2px 8px rgba(99,102,241,.4);outline:2px solid rgba(99,102,241,.2);outline-offset:1px;">—</div>
+                                    <div class="min-w-0">
+                                        <p class="font-semibold text-default-900 text-sm leading-tight truncate" id="dd-user-name">—</p>
+                                        <p class="text-xs text-default-400 truncate mt-0.5" id="dd-user-email">—</p>
+                                        <span class="text-xs px-1.5 py-0.5 rounded-full mt-1 inline-block font-medium" id="dd-user-role-badge">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Menu items -->
+                            <div class="p-1.5">
+                                <!-- User management link — super_admin only -->
+                                <a id="nav-users-link" href="#" onclick="showPanel('users');return false;"
+                                   class="hidden items-center gap-2.5 py-2 px-3 rounded-md text-sm text-default-700 hover:bg-default-100 hover:text-default-900 transition-colors cursor-pointer">
+                                    <i class="iconify lucide--users text-base text-default-400"></i>
+                                    User Management
+                                </a>
+                                <!-- Change Password -->
+                                <button onclick="openChpwSelf()"
+                                   class="w-full text-left flex items-center gap-2.5 py-2 px-3 rounded-md text-sm text-default-700 hover:bg-default-100 hover:text-default-900 transition-colors cursor-pointer">
+                                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="text-default-400 flex-shrink-0">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                    Change Password
+                                </button>
+                                <!-- Divider -->
+                                <div class="my-1 border-t border-default-100"></div>
+                                <!-- Sign Out -->
+                                <button id="topbar-logout-btn"
+                                   class="w-full text-left flex items-center gap-2.5 py-2 px-3 rounded-md text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer">
+                                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="flex-shrink-0">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16 17 21 12 16 7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /Topbar -->
+
+    <main class="p-6">
+
+    <!-- ══════════════════════════════════════════════════
+         PANEL: PIPELINE DASHBOARD  (default)
+    ══════════════════════════════════════════════════ -->
+    <div id="panel-pipeline">
+
+        <!-- Breadcrumb -->
+        <div class="kt-card mb-6">
+            <div class="kt-card-content py-3">
+                <div class="flex items-center md:justify-between flex-wrap gap-2">
+                    <h4 id="page-heading" class="text-default-900 text-base font-semibold">Outbound Pipeline Dashboard</h4>
+                    <div class="md:flex hidden items-center gap-3 text-sm">
+                        <span id="breadcrumb-company" class="text-default-500 font-medium">Calyxr</span>
+                        <i class="iconify tabler--chevron-right text-default-400"></i>
+                        <span class="text-default-700 font-medium">Pipeline</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid xl:grid-cols-4 md:grid-cols-2 gap-4 mb-6">
+            <div class="kt-card">
+                <div class="kt-card-content p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">Total Accounts</p>
+                            <h3 id="stat-total" class="text-[1.5rem] font-semibold text-default-900">0</h3>
+                        </div>
+                        <div class="size-12 rounded-full flex items-center justify-center bg-primary/10 text-primary">
+                            <i class="iconify lucide--users text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-card">
+                <div class="kt-card-content p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">ICP Qualified</p>
+                            <h3 id="stat-icp" class="text-[1.5rem] font-semibold text-default-900">0</h3>
+                        </div>
+                        <div class="size-12 rounded-full flex items-center justify-center bg-teal-500/10 text-teal-500">
+                            <i class="iconify lucide--check-circle text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-card">
+                <div class="kt-card-content p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">Avg ICP Score</p>
+                            <h3 id="stat-score" class="text-[1.5rem] font-semibold text-default-900">0</h3>
+                        </div>
+                        <div class="size-12 rounded-full flex items-center justify-center bg-violet-500/10 text-violet-500">
+                            <i class="iconify lucide--bar-chart-2 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-card">
+                <div class="kt-card-content p-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wide text-default-500 font-medium mb-1">Emails Generated</p>
+                            <h3 id="stat-emails" class="text-[1.5rem] font-semibold text-default-900">0</h3>
+                        </div>
+                        <div class="size-12 rounded-full flex items-center justify-center bg-orange-500/10 text-orange-500">
+                            <i class="iconify lucide--mail text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload & Run card -->
+        <div class="kt-card mb-6">
+            <div class="kt-card-content p-6">
+                <!-- Card header with title + pipeline settings gear -->
+                <div class="flex items-center justify-between mb-4">
+                    <h5 class="text-base font-semibold text-default-900 flex items-center gap-2">
+                        <i class="iconify lucide--file-plus text-primary text-xl"></i>
+                        Upload Apollo CSV &amp; Run Pipeline
+                    </h5>
+                    <!-- Pipeline quick-settings gear (admin+ only) -->
+                    <button id="pipeline-gear-btn" onclick="openPipelineSettings()" style="display:none"
+                            class="p-2 rounded-lg border border-default-200 hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all"
+                            title="Pipeline Settings (ICP Threshold, Delay, Max Accounts)">
+                        <i class="iconify lucide--settings text-base"></i>
+                    </button>
+                </div>
+
+                <div id="drop-zone"
+                     class="border-2 border-dashed border-default-300 rounded-xl p-8 text-center mb-4 transition-colors hover:border-primary/60 cursor-pointer"
+                     onclick="document.getElementById('csv-input').click()">
+                    <i class="iconify tabler--file-text text-4xl text-default-400 mb-3 block"></i>
+                    <p class="text-default-600 font-medium mb-1">Drop your Apollo export CSV here</p>
+                    <p class="text-default-400 text-sm">or click to browse &nbsp;(.csv only)</p>
+                    <p id="file-name-display" class="text-primary text-sm font-semibold mt-2"></p>
+                    <input type="file" id="csv-input" accept=".csv" class="hidden">
+                </div>
+
+                <div id="upload-msg" class="text-sm mb-4 font-medium hidden"></div>
+
+                <!-- ── Campaign Selector ── -->
+                <div class="mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1">
+                            <label class="block text-xs font-semibold text-default-500 mb-1.5 uppercase tracking-wide">
+                                Campaign
+                            </label>
+                            <div class="flex gap-2">
+                                <select id="campaign-select"
+                                    style="flex:1;padding:.5rem .75rem;border-radius:.5rem;border:1px solid var(--border-color,#e2e8f0);background:var(--bg-input,#fff);font-size:.875rem;color:var(--text-primary,#0f172a);">
+                                    <option value="">— No Campaign (use global prompts) —</option>
+                                </select>
+                                <button onclick="showPanel('campaigns')"
+                                    class="kt-btn kt-btn-outline flex items-center gap-1.5 px-3 py-2 text-sm"
+                                    title="Open Campaign Manager">
+                                    <i class="iconify lucide--settings text-base"></i>
+                                    Manage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="progress-wrap" class="mb-4 hidden">
+                    <div class="flex items-center justify-between text-xs text-default-500 mb-1.5">
+                        <span>Processing accounts…</span>
+                        <span id="progress-label">0 / 0</span>
+                    </div>
+                    <div class="w-full h-2.5 rounded-full bg-default-200 overflow-hidden">
+                        <div id="progress-bar-inner"
+                             class="h-2.5 rounded-full bg-primary transition-[width] duration-300"
+                             style="width:0%"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 flex-wrap">
+                    <button id="run-btn" onclick="runPipeline()"
+                            class="kt-btn kt-btn-primary flex items-center gap-2 px-6 py-2.5">
+                        <i class="iconify lucide--move-right text-lg"></i> Run Pipeline
+                    </button>
+                    <button id="stop-btn" onclick="stopPipeline()" disabled
+                            class="kt-btn flex items-center gap-2 px-6 py-2.5"
+                            style="background:#ef4444;color:#fff;border-color:#ef4444;opacity:0.4;cursor:not-allowed;"
+                            title="Force stop — only active while pipeline is running">
+                        <i class="iconify lucide--square text-lg"></i> Force Stop
+                    </button>
+                    <button id="export-btn" onclick="exportCSV()"
+                            class="kt-btn kt-btn-outline flex items-center gap-2 px-6 py-2.5 hidden">
+                        <i class="iconify lucide--download text-lg"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Agent Log -->
+        <div class="kt-card mb-6">
+            <div class="kt-card-content p-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h5 class="text-base font-semibold text-default-900 flex items-center gap-2">
+                        <i class="iconify lucide--list text-primary text-xl"></i>
+                        Live Agent Log
+                    </h5>
+                    <button onclick="document.getElementById('log-terminal').innerHTML=''"
+                            class="text-xs text-default-400 hover:text-red-400 flex items-center gap-1 transition-colors">
+                        <i class="iconify lucide--circle-x text-sm"></i> Clear
+                    </button>
+                </div>
+                <div id="log-terminal">
+                    <span class="ln-ping">— Awaiting pipeline run —</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="kt-card" id="results-section" style="display:none">
+            <div class="kt-card-content p-6">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <h5 class="text-base font-semibold text-default-900 flex items-center gap-2">
+                        <i class="iconify uil--table text-primary text-xl"></i>
+                        Results
+                        <span id="result-count-badge"
+                              class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">0</span>
+                    </h5>
+                    <button onclick="exportCSV()"
+                            class="kt-btn kt-btn-primary flex items-center gap-2 px-4 py-2 text-sm">
+                        <i class="iconify lucide--download text-sm"></i> Export CSV
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5 active" onclick="switchTab(this,'contact')">Contact</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'icp')">ICP</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'research')">Research</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'pain')">Pain Signals</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'personal')">Personalisation</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'emails')">Emails</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'sources')">Data Sources</button>
+                    <button class="col-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchTab(this,'skipped')" id="skipped-tab-btn"
+                        style="border-color:rgba(217,119,6,.4);color:#b45309;">⚠ Skipped</button>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-default-200">
+                    <table class="w-full text-sm text-left text-default-600">
+                        <thead class="text-xs uppercase bg-default-50 text-default-500 border-b border-default-200">
+                            <tr id="table-head-row"></tr>
+                        </thead>
+                        <tbody id="results-tbody" class="divide-y divide-default-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-pipeline -->
+
+
+    <!-- ══════════════════════════════════════════════════
+         PANEL: RUN HISTORY
+    ══════════════════════════════════════════════════ -->
+    <div id="panel-history" style="display:none">
+
+        <div class="kt-card mb-6">
+            <div class="kt-card-content py-3">
+                <div class="flex items-center md:justify-between flex-wrap gap-2">
+                    <h4 class="text-default-900 text-base font-semibold">Run History</h4>
+                    <div class="md:flex hidden items-center gap-3 text-sm">
+                        <span id="breadcrumb-company-hist" class="text-default-500 font-medium">Calyxr</span>
+                        <i class="iconify tabler--chevron-right text-default-400"></i>
+                        <span class="text-default-700 font-medium">History</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-card mb-6">
+            <div class="kt-card-content p-6">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <h5 class="text-base font-semibold text-default-900 flex items-center gap-2">
+                        <i class="iconify uil--table text-primary text-xl"></i>
+                        All Pipeline Runs
+                        <span id="history-count-badge"
+                              class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">0</span>
+                    </h5>
+                    <button onclick="loadHistory()"
+                            class="kt-btn kt-btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
+                        <i class="iconify lucide--list text-sm"></i> Refresh
+                    </button>
+                </div>
+
+                <!-- ── History Filters ─────────────────────────────────────── -->
+                <div class="flex flex-wrap gap-3 mb-4 p-3 rounded-lg bg-default-50 border border-default-200 items-end">
+                    <!-- Campaign filter -->
+                    <div class="flex flex-col gap-1 min-w-[160px]">
+                        <label class="text-xs font-medium text-default-600">Campaign</label>
+                        <select id="hist-filter-campaign"
+                                onchange="_applyHistoryFilters()"
+                                class="kt-select text-xs px-3 py-1.5 rounded border border-default-200 bg-white text-default-700 focus:outline-none focus:ring-1 focus:ring-primary">
+                            <option value="">All Campaigns</option>
+                        </select>
+                    </div>
+                    <!-- Executed By filter -->
+                    <div class="flex flex-col gap-1 min-w-[160px]">
+                        <label class="text-xs font-medium text-default-600">Executed By</label>
+                        <select id="hist-filter-user"
+                                onchange="_applyHistoryFilters()"
+                                class="kt-select text-xs px-3 py-1.5 rounded border border-default-200 bg-white text-default-700 focus:outline-none focus:ring-1 focus:ring-primary">
+                            <option value="">All Users</option>
+                        </select>
+                    </div>
+                    <!-- Date From -->
+                    <div class="flex flex-col gap-1 min-w-[140px]">
+                        <label class="text-xs font-medium text-default-600">Date From</label>
+                        <input type="date" id="hist-filter-date-from"
+                               onchange="_applyHistoryFilters()"
+                               class="text-xs px-3 py-1.5 rounded border border-default-200 bg-white text-default-700 focus:outline-none focus:ring-1 focus:ring-primary" />
+                    </div>
+                    <!-- Date To -->
+                    <div class="flex flex-col gap-1 min-w-[140px]">
+                        <label class="text-xs font-medium text-default-600">Date To</label>
+                        <input type="date" id="hist-filter-date-to"
+                               onchange="_applyHistoryFilters()"
+                               class="text-xs px-3 py-1.5 rounded border border-default-200 bg-white text-default-700 focus:outline-none focus:ring-1 focus:ring-primary" />
+                    </div>
+                    <!-- Clear button -->
+                    <button onclick="_clearHistoryFilters()"
+                            class="kt-btn kt-btn-outline text-xs px-3 py-1.5 flex items-center gap-1 self-end">
+                        <i class="iconify lucide--x text-xs"></i> Clear
+                    </button>
+                    <!-- Filtered count indicator -->
+                    <span id="hist-filter-info" class="text-xs text-default-400 self-end pb-1.5"></span>
+                </div>
+
+                <div class="overflow-x-auto rounded-lg border border-default-200">
+                    <table class="w-full text-sm text-left text-default-600">
+                        <thead class="text-xs uppercase bg-default-50 text-default-500 border-b border-default-200">
+                            <tr>
+                                <th class="px-4 py-3">Run #</th>
+                                <th class="px-4 py-3">Date &amp; Time</th>
+                                <th class="px-4 py-3">Executed By</th>
+                                <th class="px-4 py-3">Campaign</th>
+                                <th class="px-4 py-3">CSV File</th>
+                                <th class="px-4 py-3 text-center">Total</th>
+                                <th class="px-4 py-3 text-center">Processed</th>
+                                <th class="px-4 py-3 text-center">Skipped</th>
+                                <th class="px-4 py-3">Duration</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <tr><td colspan="11" class="px-4 py-8 text-center text-default-400">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="history-results-section" class="kt-card" style="display:none">
+            <div class="kt-card-content p-6">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <h5 class="text-base font-semibold text-default-900 flex items-center gap-2">
+                        <i class="iconify uil--table text-primary text-xl"></i>
+                        Results — Run <span id="history-run-label">#—</span>
+                        <span id="history-result-count-badge"
+                              class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">0</span>
+                    </h5>
+                    <button onclick="exportHistoryRun()"
+                            class="kt-btn kt-btn-primary flex items-center gap-2 px-4 py-2 text-sm">
+                        <i class="iconify lucide--download text-sm"></i> Export CSV
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5 active" onclick="switchHistTab(this,'contact')">Contact</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'icp')">ICP</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'research')">Research</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'pain')">Pain Signals</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'personal')">Personalisation</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'emails')">Emails</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'sources')">Data Sources</button>
+                    <button class="hist-tab kt-btn kt-btn-outline text-xs px-3 py-1.5" onclick="switchHistTab(this,'skipped')" id="hist-skipped-tab-btn"
+                        style="border-color:rgba(217,119,6,.4);color:#b45309;">⚠ Skipped</button>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-default-200">
+                    <table class="w-full text-sm text-left text-default-600">
+                        <thead class="text-xs uppercase bg-default-50 text-default-500 border-b border-default-200">
+                            <tr id="hist-table-head-row"></tr>
+                        </thead>
+                        <tbody id="hist-results-tbody" class="divide-y divide-default-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-history -->
+
+
+    <!-- ══════════════════════════════════════════════════
+         PANEL: EDIT AGENT PROMPTS  (admin+ only)
+    ══════════════════════════════════════════════════ -->
+    <div id="panel-prompts" style="display:none">
+
+        <div class="kt-card mb-6">
+            <div class="kt-card-content py-3">
+                <div class="flex items-center md:justify-between flex-wrap gap-2">
+                    <h4 class="text-default-900 text-base font-semibold">Edit Agent Prompts</h4>
+                    <div class="md:flex hidden items-center gap-3 text-sm">
+                        <span id="breadcrumb-company-prompts" class="text-default-500 font-medium">Calyxr</span>
+                        <i class="iconify tabler--chevron-right text-default-400"></i>
+                        <span class="text-default-700 font-medium">Agent Prompts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="kt-card mb-6">
+            <div class="kt-card-content p-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-xl">💡</span>
+                    <div>
+                        <p class="text-sm font-semibold text-default-900 mb-0.5">How Agent Prompts Work</p>
+                        <p class="text-xs text-default-500 leading-relaxed">
+                            Each agent uses a <strong>system prompt</strong> to guide Claude AI behaviour. Changes are saved to MySQL and take effect on the <strong>next pipeline run</strong>.
+                            Click <strong>Reset to Default</strong> to restore the original built-in prompt at any time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-5">
+            <!-- Agent cards: 1–6 -->
+            <!-- Agent 1 -->
+            <div class="kt-card" id="prompt-card-icp">
+                <div class="kt-card-content p-6">
+                    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+                        <div>
+                            <h5 class="font-bold text-default-900 text-sm flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center size-6 rounded-full bg-primary text-white text-xs font-bold">1</span>
+                                ICP Qualification Agent
+                            </h5>
+                            <p class="text-xs text-default-500 mt-1">Evaluates whether a company fits your Ideal Customer Profile</p>
+                            <p id="prompt-ts-icp" class="text-xs text-default-400 mt-0.5"></p>
+                        </div>
+                        <span id="prompt-badge-icp" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Default</span>
+                    </div>
+                    <textarea id="prompt-ta-icp" class="prompt-ta" rows="14" placeholder="Loading prompt…"></textarea>
+                    <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
+                        <span id="prompt-msg-icp" class="text-xs font-medium"></span>
+                        <div class="flex gap-2">
+                            <button data-copy-ta="prompt-ta-icp" onclick="_copyPrompt('prompt-ta-icp')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5 flex items-center gap-1 text-default-500">
+                                <i class="iconify lucide--copy text-xs"></i> Copy
+                            </button>
+                            <button onclick="resetPrompt('icp')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5">↺ Reset Default</button>
+                            <button onclick="savePrompt('icp')" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                                <i class="iconify lucide--check-circle text-xs"></i> Save Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Agent 2 -->
+            <div class="kt-card" id="prompt-card-research">
+                <div class="kt-card-content p-6">
+                    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+                        <div>
+                            <h5 class="font-bold text-default-900 text-sm flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center size-6 rounded-full bg-teal-500 text-white text-xs font-bold">2</span>
+                                Company Research Agent
+                            </h5>
+                            <p class="text-xs text-default-500 mt-1">Analyses the practice website and returns operational signals</p>
+                            <p id="prompt-ts-research" class="text-xs text-default-400 mt-0.5"></p>
+                        </div>
+                        <span id="prompt-badge-research" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Default</span>
+                    </div>
+                    <textarea id="prompt-ta-research" class="prompt-ta" rows="14" placeholder="Loading prompt…"></textarea>
+                    <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
+                        <span id="prompt-msg-research" class="text-xs font-medium"></span>
+                        <div class="flex gap-2">
+                            <button data-copy-ta="prompt-ta-research" onclick="_copyPrompt('prompt-ta-research')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5 flex items-center gap-1 text-default-500">
+                                <i class="iconify lucide--copy text-xs"></i> Copy
+                            </button>
+                            <button onclick="resetPrompt('research')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5">↺ Reset Default</button>
+                            <button onclick="savePrompt('research')" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                                <i class="iconify lucide--check-circle text-xs"></i> Save Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Agent 3 -->
+            <div class="kt-card" id="prompt-card-pain">
+                <div class="kt-card-content p-6">
+                    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+                        <div>
+                            <h5 class="font-bold text-default-900 text-sm flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center size-6 rounded-full bg-orange-500 text-white text-xs font-bold">3</span>
+                                Pain Signal Detection Agent
+                            </h5>
+                            <p class="text-xs text-default-500 mt-1">Detects likely RCM and operational pain points</p>
+                            <p id="prompt-ts-pain" class="text-xs text-default-400 mt-0.5"></p>
+                        </div>
+                        <span id="prompt-badge-pain" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Default</span>
+                    </div>
+                    <textarea id="prompt-ta-pain" class="prompt-ta" rows="14" placeholder="Loading prompt…"></textarea>
+                    <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
+                        <span id="prompt-msg-pain" class="text-xs font-medium"></span>
+                        <div class="flex gap-2">
+                            <button data-copy-ta="prompt-ta-pain" onclick="_copyPrompt('prompt-ta-pain')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5 flex items-center gap-1 text-default-500">
+                                <i class="iconify lucide--copy text-xs"></i> Copy
+                            </button>
+                            <button onclick="resetPrompt('pain')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5">↺ Reset Default</button>
+                            <button onclick="savePrompt('pain')" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                                <i class="iconify lucide--check-circle text-xs"></i> Save Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Agent 4 -->
+            <div class="kt-card" id="prompt-card-contact">
+                <div class="kt-card-content p-6">
+                    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+                        <div>
+                            <h5 class="font-bold text-default-900 text-sm flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center size-6 rounded-full bg-violet-500 text-white text-xs font-bold">4</span>
+                                Contact Intelligence Agent
+                            </h5>
+                            <p class="text-xs text-default-500 mt-1">Evaluates the best contact and their decision-making likelihood</p>
+                            <p id="prompt-ts-contact" class="text-xs text-default-400 mt-0.5"></p>
+                        </div>
+                        <span id="prompt-badge-contact" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Default</span>
+                    </div>
+                    <textarea id="prompt-ta-contact" class="prompt-ta" rows="14" placeholder="Loading prompt…"></textarea>
+                    <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
+                        <span id="prompt-msg-contact" class="text-xs font-medium"></span>
+                        <div class="flex gap-2">
+                            <button data-copy-ta="prompt-ta-contact" onclick="_copyPrompt('prompt-ta-contact')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5 flex items-center gap-1 text-default-500">
+                                <i class="iconify lucide--copy text-xs"></i> Copy
+                            </button>
+                            <button onclick="resetPrompt('contact')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5">↺ Reset Default</button>
+                            <button onclick="savePrompt('contact')" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                                <i class="iconify lucide--check-circle text-xs"></i> Save Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Agent 5 -->
+            <div class="kt-card" id="prompt-card-personalization">
+                <div class="kt-card-content p-6">
+                    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+                        <div>
+                            <h5 class="font-bold text-default-900 text-sm flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center size-6 rounded-full bg-pink-500 text-white text-xs font-bold">5</span>
+                                Personalization Agent
+                            </h5>
+                            <p class="text-xs text-default-500 mt-1">Generates highly specific outreach insights</p>
+                            <p id="prompt-ts-personalization" class="text-xs text-default-400 mt-0.5"></p>
+                        </div>
+                        <span id="prompt-badge-personalization" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Default</span>
+                    </div>
+                    <textarea id="prompt-ta-personalization" class="prompt-ta" rows="14" placeholder="Loading prompt…"></textarea>
+                    <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
+                        <span id="prompt-msg-personalization" class="text-xs font-medium"></span>
+                        <div class="flex gap-2">
+                            <button data-copy-ta="prompt-ta-personalization" onclick="_copyPrompt('prompt-ta-personalization')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5 flex items-center gap-1 text-default-500">
+                                <i class="iconify lucide--copy text-xs"></i> Copy
+                            </button>
+                            <button onclick="resetPrompt('personalization')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5">↺ Reset Default</button>
+                            <button onclick="savePrompt('personalization')" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                                <i class="iconify lucide--check-circle text-xs"></i> Save Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Agent 6 -->
+            <div class="kt-card" id="prompt-card-email">
+                <div class="kt-card-content p-6">
+                    <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+                        <div>
+                            <h5 class="font-bold text-default-900 text-sm flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center size-6 rounded-full bg-sky-500 text-white text-xs font-bold">6</span>
+                                Email Generation Agent
+                            </h5>
+                            <p class="text-xs text-default-500 mt-1">Writes outbound email sequences and LinkedIn DMs</p>
+                            <p id="prompt-ts-email" class="text-xs text-default-400 mt-0.5"></p>
+                        </div>
+                        <span id="prompt-badge-email" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Default</span>
+                    </div>
+                    <textarea id="prompt-ta-email" class="prompt-ta" rows="18" placeholder="Loading prompt…"></textarea>
+                    <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
+                        <span id="prompt-msg-email" class="text-xs font-medium"></span>
+                        <div class="flex gap-2">
+                            <button data-copy-ta="prompt-ta-email" onclick="_copyPrompt('prompt-ta-email')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5 flex items-center gap-1 text-default-500">
+                                <i class="iconify lucide--copy text-xs"></i> Copy
+                            </button>
+                            <button onclick="resetPrompt('email')" class="kt-btn kt-btn-outline text-xs px-4 py-1.5">↺ Reset Default</button>
+                            <button onclick="savePrompt('email')" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                                <i class="iconify lucide--check-circle text-xs"></i> Save Prompt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-prompts -->
+
+
+    <!-- ══════════════════════════════════════════════════
+         PANEL: USER MANAGEMENT  (super_admin only)
+    ══════════════════════════════════════════════════ -->
+    <div id="panel-users" style="display:none">
+
+        <div class="kt-card mb-6">
+            <div class="kt-card-content py-3">
+                <div class="flex items-center md:justify-between flex-wrap gap-2">
+                    <h4 class="text-default-900 text-base font-semibold">User Management</h4>
+                    <div class="md:flex hidden items-center gap-3 text-sm">
+                        <span id="breadcrumb-company-users" class="text-default-500 font-medium">Calyxr</span>
+                        <i class="iconify tabler--chevron-right text-default-400"></i>
+                        <span class="text-default-700 font-medium">Users</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role guide info card -->
+        <div class="grid md:grid-cols-4 gap-4 mb-6">
+            <div class="kt-card">
+                <div class="kt-card-content p-4 text-center">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 mb-2">Super Admin</span>
+                    <p class="text-xs text-default-500">Full access + user management</p>
+                </div>
+            </div>
+            <div class="kt-card">
+                <div class="kt-card-content p-4 text-center">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 mb-2">Admin</span>
+                    <p class="text-xs text-default-500">Config, prompts &amp; pipeline</p>
+                </div>
+            </div>
+            <div class="kt-card">
+                <div class="kt-card-content p-4 text-center">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 mb-2">Analyst</span>
+                    <p class="text-xs text-default-500">Run pipeline, export results</p>
+                </div>
+            </div>
+            <div class="kt-card">
+                <div class="kt-card-content p-4 text-center">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 mb-2">Viewer</span>
+                    <p class="text-xs text-default-500">Read-only access</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users table -->
+        <div class="kt-card">
+            <div class="kt-card-content p-6">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <h5 class="text-base font-semibold text-default-900 flex items-center gap-2">
+                        <i class="iconify lucide--users text-primary text-xl"></i>
+                        Team Members
+                        <span id="users-count-badge"
+                              class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">0</span>
+                    </h5>
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadUsers()" class="kt-btn kt-btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
+                            <i class="iconify lucide--list text-sm"></i> Refresh
+                        </button>
+                        <button onclick="openAddUserModal()" class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1">
+                            <!-- User-plus SVG -->
+                            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <line x1="19" y1="8" x2="19" y2="14"/>
+                                <line x1="22" y1="11" x2="16" y2="11"/>
+                            </svg>
+                            Add User
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-default-200">
+                    <table class="w-full text-sm text-left text-default-600">
+                        <thead class="text-xs uppercase bg-default-50 text-default-500 border-b border-default-200">
+                            <tr>
+                                <th class="px-4 py-3">Name</th>
+                                <th class="px-4 py-3">Email</th>
+                                <th class="px-4 py-3">Role</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Created</th>
+                                <th class="px-4 py-3">Last Login</th>
+                                <th class="px-4 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody" class="divide-y divide-default-100">
+                            <tr><td colspan="7" class="px-4 py-8 text-center text-default-400">Loading users…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-users -->
+
+    <!-- ══════════════════════════════════════════════════
+         PANEL: ROLE & PERMISSION MANAGER (super_admin only)
+    ══════════════════════════════════════════════════ -->
+    <div id="panel-roles" style="display:none">
+
+        <div class="kt-card mb-6">
+            <div class="kt-card-content py-3">
+                <div class="flex items-center md:justify-between flex-wrap gap-2">
+                    <h4 class="text-default-900 text-base font-semibold">Roles &amp; Permissions</h4>
+                    <div class="md:flex hidden items-center gap-3 text-sm">
+                        <span id="breadcrumb-company-roles" class="text-default-500 font-medium">Calyxr</span>
+                        <i class="iconify tabler--chevron-right text-default-400"></i>
+                        <span class="text-default-700 font-medium">Roles &amp; Permissions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info banner -->
+        <div class="kt-card mb-6 border-l-4 border-primary" style="border-left-width:4px;border-left-color:#6366f1">
+            <div class="kt-card-content px-5 py-3 flex items-start gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p class="text-sm text-default-600">
+                    Toggle permissions for each role. <strong>Super Admin</strong> permissions are locked — they always have full access.
+                    Changes take effect on next login for affected users.
+                </p>
+            </div>
+        </div>
+
+        <!-- Roles grid — rendered by JS -->
+        <div id="roles-grid" class="grid md:grid-cols-2 gap-5">
+            <div class="kt-card"><div class="kt-card-content p-8 text-center text-default-400 text-sm">Loading roles…</div></div>
+        </div>
+
+    </div><!-- /panel-roles -->
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL: CAMPAIGN MANAGER  (master-detail layout)
+    ══════════════════════════════════════════════════════ -->
+    <div id="panel-campaigns" style="display:none">
+
+        <div style="display:flex;height:calc(100vh - 170px);min-height:560px;border-radius:.875rem;overflow:hidden;border:1px solid var(--border-color,#e2e8f0);box-shadow:0 4px 24px rgba(0,0,0,.07);">
+
+            <!-- ══ LEFT: Dark sidebar ══ -->
+            <div style="width:300px;min-width:260px;flex-shrink:0;display:flex;flex-direction:column;background:#1e1b4b;">
+
+                <!-- Sidebar header -->
+                <div style="padding:1.35rem 1.25rem .9rem;flex-shrink:0;background:linear-gradient(180deg,#1e1b4b 0%,#1e1b4b 100%);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                        <div>
+                            <div style="font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,.6);margin-bottom:.3rem;">Outbound</div>
+                            <h2 style="font-size:1.05rem;font-weight:800;color:#fff;margin:0;line-height:1.2;">Campaigns</h2>
+                        </div>
+                        <button onclick="showNewCampaignForm()" title="New Campaign"
+                            onmouseover="this.style.background='rgba(99,102,241,.5)';this.style.borderColor='rgba(165,180,252,.6)'"
+                            onmouseout="this.style.background='rgba(99,102,241,.25)';this.style.borderColor='rgba(165,180,252,.3)'"
+                            style="width:32px;height:32px;border-radius:.5rem;background:rgba(99,102,241,.25);border:1.5px solid rgba(165,180,252,.3);color:#a5b4fc;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.25rem;line-height:1;flex-shrink:0;transition:background .15s;">+</button>
+                    </div>
+                    <!-- Search -->
+                    <div style="position:relative;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(165,180,252,.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:.65rem;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input id="camp-search" oninput="_filterCampaigns(this.value)" placeholder="Search campaigns…"
+                            style="width:100%;padding:.5rem .75rem .5rem 2.1rem;border-radius:.55rem;border:1px solid rgba(165,180,252,.15);background:rgba(255,255,255,.08);color:#e0e7ff;font-size:.8rem;outline:none;box-sizing:border-box;"
+                            onfocus="this.style.borderColor='rgba(165,180,252,.4)';this.style.background='rgba(255,255,255,.12)'"
+                            onblur="this.style.borderColor='rgba(165,180,252,.15)';this.style.background='rgba(255,255,255,.08)'">
+                    </div>
+                </div>
+
+                <!-- Campaign count label -->
+                <div id="camp-count-label" style="padding:.3rem 1.25rem .5rem;font-size:.68rem;font-weight:600;color:rgba(165,180,252,.45);letter-spacing:.05em;flex-shrink:0;"></div>
+
+                <!-- Campaign list (scrollable) -->
+                <div id="campaign-list" style="flex:1;overflow-y:auto;padding:.25rem .75rem .5rem;"></div>
+
+                <!-- Bottom: New Campaign button -->
+                <div style="padding:.85rem 1rem 1rem;border-top:1px solid rgba(255,255,255,.07);flex-shrink:0;">
+                    <button onclick="showNewCampaignForm()"
+                        onmouseover="this.style.background='#4f46e5'"
+                        onmouseout="this.style.background='#6366f1'"
+                        style="width:100%;padding:.6rem;border-radius:.6rem;background:#6366f1;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.45rem;box-shadow:0 3px 10px rgba(99,102,241,.4);transition:background .15s;">
+                        <i class="iconify lucide--file-plus text-sm"></i> New Campaign
+                    </button>
+                </div>
+
+            </div><!-- /sidebar -->
+
+            <!-- ══ RIGHT: Campaign editor area ══ -->
+            <div id="campaign-editor" style="flex:1;overflow-y:auto;background:var(--bg-muted,#f8fafc);">
+
+                <!-- Default empty state -->
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;padding:3rem 2rem;">
+                    <div style="width:72px;height:72px;border-radius:1.25rem;background:linear-gradient(135deg,#ede9fe,#ddd6fe);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size:1.05rem;font-weight:800;color:var(--text-primary,#0f172a);margin:0 0 .5rem;">No Campaign Selected</h3>
+                    <p style="font-size:.83rem;color:var(--text-secondary,#94a3b8);margin:0 0 1.75rem;max-width:260px;line-height:1.65;">Select a campaign from the sidebar to view and edit its configuration.</p>
+                    <button onclick="showNewCampaignForm()"
+                        style="padding:.65rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:.55rem;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(99,102,241,.3);">
+                        + Create New Campaign
+                    </button>
+                </div>
+
+            </div><!-- /editor -->
+
+        </div>
+
+    </div><!-- /panel-campaigns -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-6 py-4 border-t border-default-200 mt-6">
+        <div class="flex items-center justify-center text-xs text-default-400">
+            <span id="footer-brand">© 2025 Calyxr Outbound Intelligence Engine — Powered by Claude AI</span>
+        </div>
+    </footer>
+
+</div><!-- /page-content -->
+</div><!-- /wrapper -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     LOGS MODAL
+════════════════════════════════════════════════════════ -->
+<div id="logs-modal" class="overlay-modal">
+    <div id="logs-modal-box" class="kt-card">
+        <div class="kt-card-content py-4 px-6 border-b border-default-200 flex items-center justify-between flex-wrap gap-3">
+            <h5 class="font-semibold text-default-900 flex items-center gap-2">
+                <i class="iconify tabler--file-text text-primary"></i> Activity Logs
+            </h5>
+            <div class="flex items-center gap-2 flex-wrap">
+                <select id="log-file-select" onchange="loadLogLines()"
+                        class="kt-input text-xs py-1.5 px-3 rounded-lg min-w-44">
+                    <option value="">Today's log</option>
+                </select>
+                <div class="flex gap-1">
+                    <button class="log-lvl-btn kt-btn kt-btn-outline text-xs px-2.5 py-1 active" onclick="setLogLevel(this,'')">All</button>
+                    <button class="log-lvl-btn kt-btn kt-btn-outline text-xs px-2.5 py-1" onclick="setLogLevel(this,'INFO')">Info</button>
+                    <button class="log-lvl-btn kt-btn kt-btn-outline text-xs px-2.5 py-1" onclick="setLogLevel(this,'WARNING')">Warn</button>
+                    <button class="log-lvl-btn kt-btn kt-btn-outline text-xs px-2.5 py-1" onclick="setLogLevel(this,'ERROR')">Error</button>
+                </div>
+                <input id="log-search" type="text" placeholder="Search…"
+                       class="kt-input text-xs py-1.5 px-3 rounded-lg w-36"
+                       oninput="renderLogLines()">
+                <label class="flex items-center gap-1 text-xs text-default-600 cursor-pointer select-none">
+                    <input type="checkbox" id="log-auto-refresh" onchange="toggleLogRefresh()" class="rounded"> Auto-refresh
+                </label>
+                <button onclick="downloadLog()" class="kt-btn kt-btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
+                    <i class="iconify lucide--download text-sm"></i> Download
+                </button>
+                <button onclick="closeLogsModal()" class="p-1 rounded hover:bg-default-100 text-default-500 hover:text-default-900 transition-colors">
+                    <i class="iconify lucide--x text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="logs-content"></div>
+        <div class="kt-card-content py-2 px-6 border-t border-default-200 flex items-center justify-between text-xs text-default-400">
+            <span id="log-line-count">0 lines</span>
+            <span id="log-file-label">—</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     CELL EXPAND MODAL
+════════════════════════════════════════════════════════ -->
+<div id="cell-modal" class="overlay-modal">
+    <div id="cell-modal-box" class="kt-card">
+        <div class="flex items-center justify-between mb-3">
+            <h6 id="cell-modal-title" class="font-semibold text-default-900 text-sm"></h6>
+            <button onclick="closeCellModal()" class="text-default-400 hover:text-default-900 transition-colors">
+                <i class="iconify lucide--x text-lg"></i>
+            </button>
+        </div>
+        <p id="cell-modal-body" class="text-sm text-default-700 whitespace-pre-wrap leading-relaxed"></p>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     EDIT APP INFO MODAL  (admin+ only)
+════════════════════════════════════════════════════════ -->
+<div id="config-modal" class="overlay-modal">
+    <div id="config-modal-box" class="kt-card">
+        <div class="kt-card-content py-4 px-6 border-b border-default-200 flex items-center justify-between">
+            <h5 class="font-semibold text-default-900 flex items-center gap-2">
+                <i class="iconify lucide--settings text-primary text-lg"></i> Edit App Info
+            </h5>
+            <button onclick="closeConfigModal()" class="p-1 rounded hover:bg-default-100 text-default-500 hover:text-default-900 transition-colors">
+                <i class="iconify lucide--x text-xl"></i>
+            </button>
+        </div>
+        <div class="kt-card-content p-6 space-y-5 overflow-y-auto" style="max-height:72vh">
+            <div>
+                <label class="cfg-label text-default-500">App Name</label>
+                <input id="cfg-app-name" type="text" class="kt-input w-full" placeholder="Calyxr Outbound Intelligence Engine">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Company / Brand Name</label>
+                <input id="cfg-company-name" type="text" class="kt-input w-full" placeholder="Calyxr">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">AI Model</label>
+                <input id="cfg-model" type="text" class="kt-input w-full bg-default-50 text-default-500 cursor-not-allowed" readonly>
+                <p class="text-xs text-default-400 mt-1">Model cannot be changed here — update in app.py</p>
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Anthropic API Key</label>
+                <div class="flex items-center gap-3">
+                    <input id="cfg-api-key-preview" type="text" class="kt-input flex-1 bg-default-50 text-default-500 cursor-not-allowed" readonly>
+                    <span id="cfg-api-status" class="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full"></span>
+                </div>
+                <p class="text-xs text-default-400 mt-1">API key is loaded from your .env file</p>
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Footer Text</label>
+                <input id="cfg-footer-text" type="text" class="kt-input w-full" placeholder="© 2025 Calyxr — Powered by Claude AI">
+            </div>
+        </div>
+        <div class="kt-card-content py-4 px-6 border-t border-default-200 flex items-center justify-between gap-3">
+            <p id="cfg-save-msg" class="text-sm font-medium hidden"></p>
+            <div class="flex gap-3 ml-auto">
+                <button onclick="closeConfigModal()" class="kt-btn kt-btn-outline px-5 py-2 text-sm">Cancel</button>
+                <button onclick="saveConfig()" class="kt-btn kt-btn-primary px-5 py-2 text-sm flex items-center gap-2">
+                    <i class="iconify lucide--check-circle text-sm"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PIPELINE QUICK SETTINGS MODAL
+     (Min ICP Score, Delay, Max Accounts — admin+ only)
+════════════════════════════════════════════════════════ -->
+<div id="pipeline-settings-modal" class="overlay-modal">
+    <div id="ps-modal-box" class="kt-card">
+        <div class="kt-card-content py-4 px-6 border-b border-default-200 flex items-center justify-between">
+            <h5 class="font-semibold text-default-900 flex items-center gap-2">
+                <i class="iconify lucide--settings text-primary text-lg"></i> Pipeline Settings
+            </h5>
+            <button onclick="closePipelineSettings()" class="p-1 rounded hover:bg-default-100 text-default-500 hover:text-default-900 transition-colors">
+                <i class="iconify lucide--x text-xl"></i>
+            </button>
+        </div>
+        <div class="kt-card-content p-6 space-y-5">
+            <!-- ICP Threshold -->
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="cfg-label text-default-500 mb-0">Min ICP Score Threshold</label>
+                    <span id="ps-icp-val" class="text-sm font-bold text-primary">40</span>
+                </div>
+                <input id="ps-icp-threshold" type="range" min="0" max="100" step="5" value="40" class="w-full"
+                       oninput="document.getElementById('ps-icp-val').textContent = this.value">
+                <div class="flex justify-between text-xs text-default-400 mt-1">
+                    <span>0 — include all</span><span>100 — strict ICP only</span>
+                </div>
+            </div>
+            <!-- Delay -->
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="cfg-label text-default-500 mb-0">Delay Between API Calls (sec)</label>
+                    <span id="ps-delay-val" class="text-sm font-bold text-primary">1.5</span>
+                </div>
+                <input id="ps-delay" type="range" min="0.5" max="5" step="0.5" value="1.5" class="w-full"
+                       oninput="document.getElementById('ps-delay-val').textContent = parseFloat(this.value).toFixed(1)">
+                <div class="flex justify-between text-xs text-default-400 mt-1">
+                    <span>0.5s (fast)</span><span>5.0s (safe / rate-limit friendly)</span>
+                </div>
+            </div>
+            <!-- Max Accounts -->
+            <div>
+                <label class="cfg-label text-default-500">Max Accounts Per Run</label>
+                <input id="ps-max-accounts" type="number" min="0" max="5000" step="10"
+                       class="kt-input w-full" placeholder="0 (no limit)">
+                <p class="text-xs text-default-400 mt-1">Set to 0 to process all accounts in the CSV.</p>
+            </div>
+        </div>
+        <div class="kt-card-content py-4 px-6 border-t border-default-200 flex items-center justify-between gap-3">
+            <span id="ps-save-msg" class="text-xs font-semibold hidden"></span>
+            <div class="flex gap-3 ml-auto">
+                <button onclick="closePipelineSettings()" class="kt-btn kt-btn-outline px-5 py-2 text-sm">Cancel</button>
+                <button onclick="savePipelineSettings()" class="kt-btn kt-btn-primary px-5 py-2 text-sm flex items-center gap-2">
+                    <i class="iconify lucide--check-circle text-sm"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ADD USER MODAL  (super_admin only)
+════════════════════════════════════════════════════════ -->
+<div id="add-user-modal" class="overlay-modal">
+    <div id="add-user-modal-box" class="kt-card">
+        <div class="kt-card-content py-4 px-6 border-b border-default-200 flex items-center justify-between">
+            <h5 class="font-semibold text-default-900 flex items-center gap-2">
+                <i class="iconify lucide--users text-primary text-lg"></i> Add New User
+            </h5>
+            <button onclick="closeAddUserModal()" class="p-1 rounded hover:bg-default-100 text-default-500 hover:text-default-900 transition-colors">
+                <i class="iconify lucide--x text-xl"></i>
+            </button>
+        </div>
+        <div class="kt-card-content p-6 space-y-4">
+            <div id="add-user-msg" class="hidden p-3 rounded-lg text-sm font-medium"></div>
+            <div>
+                <label class="cfg-label text-default-500">Full Name</label>
+                <input id="add-user-name" type="text" class="kt-input w-full" placeholder="Jane Smith">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Email Address</label>
+                <input id="add-user-email" type="email" class="kt-input w-full" placeholder="jane@company.com">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Password (min 8 chars)</label>
+                <input id="add-user-password" type="password" class="kt-input w-full" placeholder="Secure password" minlength="8">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Role</label>
+                <select id="add-user-role" class="kt-input w-full">
+                    <option value="">Loading roles…</option>
+                </select>
+            </div>
+        </div>
+        <div class="kt-card-content py-4 px-6 border-t border-default-200 flex gap-3 justify-end">
+            <button onclick="closeAddUserModal()" class="kt-btn kt-btn-outline px-5 py-2 text-sm">Cancel</button>
+            <button onclick="saveNewUser()" class="kt-btn kt-btn-primary px-5 py-2 text-sm flex items-center gap-2">
+                <i class="iconify lucide--check-circle text-sm"></i> Create User
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     CHANGE PASSWORD MODAL
+════════════════════════════════════════════════════════ -->
+<div id="chpw-modal" class="overlay-modal">
+    <div id="chpw-modal-box" class="kt-card">
+        <div class="kt-card-content py-4 px-6 border-b border-default-200 flex items-center justify-between">
+            <h5 class="font-semibold text-default-900 flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <span id="chpw-modal-title">Change Password</span>
+            </h5>
+            <button onclick="closeChpwModal()" class="p-1 rounded hover:bg-default-100 text-default-500 hover:text-default-900 transition-colors">
+                <i class="iconify lucide--x text-xl"></i>
+            </button>
+        </div>
+        <div class="kt-card-content p-6 space-y-4">
+            <div id="chpw-msg" class="hidden p-3 rounded-lg text-sm font-medium"></div>
+            <!-- Current password — only shown for self-change -->
+            <div id="chpw-current-wrap">
+                <label class="cfg-label text-default-500">Current Password</label>
+                <input id="chpw-current" type="password" class="kt-input w-full" placeholder="Your current password">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">New Password <span class="text-default-400 font-normal">(min 8 chars)</span></label>
+                <input id="chpw-new" type="password" class="kt-input w-full" placeholder="New password" minlength="8">
+            </div>
+            <div>
+                <label class="cfg-label text-default-500">Confirm New Password</label>
+                <input id="chpw-confirm" type="password" class="kt-input w-full" placeholder="Repeat new password" minlength="8">
+            </div>
+        </div>
+        <div class="kt-card-content py-4 px-6 border-t border-default-200 flex gap-3 justify-end">
+            <button onclick="closeChpwModal()" class="kt-btn kt-btn-outline px-5 py-2 text-sm">Cancel</button>
+            <button onclick="submitChpw()" class="kt-btn kt-btn-primary px-5 py-2 text-sm flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Save Password
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     APPLICATION JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+/* ────────────────────────────────────────────────
+   THEME TOGGLE
+   Skotwind/KT CSS uses the `.dark` CLASS on <html>
+   to activate dark mode — NOT a data-theme attr.
+──────────────────────────────────────────────── */
+(function(){ applyTheme(localStorage.getItem('calyxr-theme') || 'light'); })();
+function applyTheme(t) {
+    /* KT framework dark mode = `.dark` class on <html> */
+    if (t === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    /* Keep data-theme attribute in sync for any custom CSS */
+    document.documentElement.setAttribute('data-theme', t);
+    const ic = document.getElementById('theme-icon');
+    if (ic) ic.textContent = t === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('calyxr-theme', t);
+}
+document.getElementById('theme-toggle').addEventListener('click', function() {
+    /* Detect current state from the class, not the attribute */
+    applyTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+});
+
+
+/* ────────────────────────────────────────────────
+   PANEL SWITCHING
+──────────────────────────────────────────────── */
+function showPanel(name) {
+    ['pipeline','history','prompts','users','campaigns','roles'].forEach(p => {
+        const el = document.getElementById('panel-' + p);
+        if (el) el.style.display = (p === name) ? '' : 'none';
+    });
+    document.querySelectorAll('.nav-panel-li').forEach(li => li.classList.remove('active'));
+    const activeLi = document.getElementById('nav-li-' + name);
+    if (activeLi) activeLi.classList.add('active');
+    // Sync breadcrumb company names
+    const co = document.getElementById('breadcrumb-company');
+    ['hist','prompts','users','campaigns','roles'].forEach(s => {
+        const el = document.getElementById('breadcrumb-company-' + s);
+        if (el && co) el.textContent = co.textContent;
+    });
+    if (name === 'history')   loadHistory();
+    if (name === 'prompts')   loadPrompts();
+    if (name === 'users')     loadUsers();
+    if (name === 'campaigns') _loadCampaignList();
+    if (name === 'roles')     loadRolesPanel();
+}
+
+
+/* ────────────────────────────────────────────────
+   STATUS BADGE
+──────────────────────────────────────────────── */
+const STATUS_LABELS = { idle:'Idle', running:'Running…', complete:'Complete', error:'Error' };
+function setStatus(st) {
+    const badge = document.getElementById('status-badge');
+    badge.className = 's-badge s-' + st;
+    badge.innerHTML = '<span class="dot"></span><span id="status-label">' + (STATUS_LABELS[st]||'Idle') + '</span>';
+}
+
+
+/* ────────────────────────────────────────────────
+   USER INFO + RBAC  (loads on init)
+──────────────────────────────────────────────── */
+function applyRBAC(perms) {
+    function vis(id, show) { const el = document.getElementById(id); if (el) el.style.display = show ? '' : 'none'; }
+
+    vis('nav-section-agents',   perms.can_manage_prompts);
+    vis('nav-li-prompts',       perms.can_manage_prompts);
+    vis('nav-li-export',        perms.can_export);
+    vis('nav-section-settings', perms.can_manage_config);
+    vis('topbar-config-btn',    perms.can_manage_config);
+    vis('pipeline-gear-btn',    perms.can_manage_config);
+    vis('nav-section-admin',    perms.can_manage_users);
+    vis('nav-li-users',         perms.can_manage_users);
+    vis('nav-li-roles',         perms.can_manage_users);
+    vis('nav-users-link',       perms.can_manage_users);
+    vis('nav-li-logs',          perms.can_manage_users);
+    vis('topbar-logs-btn',      perms.can_manage_users);
+
+    if (!perms.can_run_pipeline) {
+        const btn = document.getElementById('run-btn');
+        if (btn) { btn.disabled = true; btn.title = 'Insufficient permissions to run pipeline'; }
+    }
+    if (!perms.can_export) {
+        document.querySelectorAll('#export-btn').forEach(b => b.style.display = 'none');
+    }
+}
+
+const ROLE_COLORS = {
+    super_admin: 'bg-amber-100 text-amber-700',
+    admin:       'bg-purple-100 text-purple-700',
+    analyst:     'bg-blue-100 text-blue-700',
+    viewer:      'bg-slate-100 text-slate-700',
+};
+function roleBadgeClass(role) { return ROLE_COLORS[role] || 'bg-gray-100 text-gray-700'; }
+function roleLabel(role) { return (role || '').replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase()); }
+
+
+/* ────────────────────────────────────────────────
+   FILE DRAG & DROP / UPLOAD
+──────────────────────────────────────────────── */
+const dropZone = document.getElementById('drop-zone');
+const csvInput = document.getElementById('csv-input');
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('border-primary'); });
+dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('border-primary'));
+dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('border-primary');
+    const f = e.dataTransfer.files[0]; if (f) uploadFile(f);
+});
+csvInput.addEventListener('change', e => { if (e.target.files[0]) uploadFile(e.target.files[0]); });
+
+function uploadFile(file) {
+    document.getElementById('file-name-display').textContent = '📎 ' + file.name;
+    showUploadMsg('Uploading…','text-default-500');
+    const fd = new FormData(); fd.append('file', file);
+    fetch('/api/upload', { method:'POST', body:fd })
+        .then(r => r.json())
+        .then(d => {
+            if (d.error) showUploadMsg('✗ ' + d.error, 'text-red-500');
+            else showUploadMsg('✓ Loaded ' + d.rows + ' rows · ' + (d.columns ? d.columns.length : '') + ' columns — ready to run!', 'text-green-600');
+        })
+        .catch(e => showUploadMsg('✗ Upload failed: ' + e, 'text-red-500'));
+}
+function showUploadMsg(msg, cls) {
+    const el = document.getElementById('upload-msg');
+    el.textContent = msg; el.className = 'text-sm mb-4 font-medium ' + cls; el.classList.remove('hidden');
+}
+
+
+/* ────────────────────────────────────────────────
+   RUN PIPELINE
+──────────────────────────────────────────────── */
+let _evtSource = null;
+function _setPipelineRunning(running) {
+    const runBtn  = document.getElementById('run-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    runBtn.disabled = running;
+    if (running) {
+        // Fully activate the stop button
+        stopBtn.disabled       = false;
+        stopBtn.style.opacity  = '1';
+        stopBtn.style.cursor   = 'pointer';
+        stopBtn.innerHTML = '<i class="iconify lucide--square text-lg"></i> Force Stop';
+    } else {
+        // Grey it out when pipeline is not running
+        stopBtn.disabled       = true;
+        stopBtn.style.opacity  = '0.4';
+        stopBtn.style.cursor   = 'not-allowed';
+        stopBtn.innerHTML = '<i class="iconify lucide--square text-lg"></i> Force Stop';
+    }
+}
+function runPipeline() {
+    _setPipelineRunning(true);
+    document.getElementById('log-terminal').innerHTML = '';
+    document.getElementById('progress-wrap').classList.remove('hidden');
+    updateProgress(0,0); setStatus('running');
+    const _campId = document.getElementById('campaign-select').value;
+    fetch('/api/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(_campId ? { campaign_id: parseInt(_campId, 10) } : {})
+    }).then(r => r.json()).then(d => {
+        if (d.error) { logLine('error','✗ ' + d.error); setStatus('error'); _setPipelineRunning(false); return; }
+        if (_evtSource) _evtSource.close();
+        _evtSource = new EventSource('/api/stream');
+        _evtSource.onmessage = e => {
+            const ev = JSON.parse(e.data); const t = ev.type||'step'; const m = ev.msg||'';
+            if (t==='ping') return;
+            logLine(t,m);
+            if (t==='complete') { setStatus('complete'); _setPipelineRunning(false); _evtSource.close(); loadResults(); IdleTimer.onPipelineComplete(); }
+            else if (t==='error') { setStatus('error'); _setPipelineRunning(false); }
+        };
+        _evtSource.onerror = () => { logLine('error','Stream disconnected.'); _setPipelineRunning(false); setStatus('error'); _evtSource.close(); };
+        statsPoller();
+    }).catch(e => { logLine('error','✗ Network error: '+e); setStatus('error'); _setPipelineRunning(false); });
+}
+
+/* ────────────────────────────────────────────────
+   FORCE STOP PIPELINE
+──────────────────────────────────────────────── */
+function stopPipeline() {
+    const stopBtn = document.getElementById('stop-btn');
+    stopBtn.disabled = true;
+    stopBtn.innerHTML = '<i class="iconify lucide--loader-2 text-lg animate-spin"></i> Stopping…';
+    fetch('/api/stop', { method:'POST' })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                logLine('error', '⚠️ Stop signal sent — pipeline will halt after current account.');
+            } else {
+                logLine('error', '✗ ' + (d.error || 'Could not stop pipeline'));
+                stopBtn.disabled = false;
+                stopBtn.innerHTML = '<i class="iconify lucide--square text-lg"></i> Force Stop';
+            }
+        })
+        .catch(() => {
+            logLine('error', '✗ Network error while sending stop signal');
+            stopBtn.disabled = false;
+            stopBtn.innerHTML = '<i class="iconify lucide--square text-lg"></i> Force Stop';
+        });
+}
+
+
+/* ────────────────────────────────────────────────
+   LIVE LOG TERMINAL
+──────────────────────────────────────────────── */
+function logLine(type, msg) {
+    const term = document.getElementById('log-terminal');
+    const div  = document.createElement('div');
+    div.className = 'ln-' + type;
+    div.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+    term.appendChild(div); term.scrollTop = term.scrollHeight;
+}
+
+
+/* ────────────────────────────────────────────────
+   STATS POLLER
+──────────────────────────────────────────────── */
+let _statsTimer = null;
+function statsPoller() {
+    clearInterval(_statsTimer);
+    _statsTimer = setInterval(() => {
+        fetch('/api/status').then(r=>r.json()).then(d => {
+            updateStatCards(d.stats||{}); updateProgress(d.current||0,d.total||0);
+            if (d.status!=='running') clearInterval(_statsTimer);
+        });
+    }, 1500);
+}
+function updateStatCards(s) {
+    document.getElementById('stat-total').textContent  = s.total_accounts  || 0;
+    document.getElementById('stat-icp').textContent    = s.icp_qualified   || 0;
+    document.getElementById('stat-score').textContent  = s.avg_icp_score   || 0;
+    document.getElementById('stat-emails').textContent = s.emails_generated || 0;
+}
+function updateProgress(cur, total) {
+    const pct = total>0 ? Math.round((cur/total)*100) : 0;
+    document.getElementById('progress-bar-inner').style.width = pct+'%';
+    document.getElementById('progress-label').textContent = cur+' / '+total;
+}
+
+
+/* ────────────────────────────────────────────────
+   RESULTS TABLE (current run)
+──────────────────────────────────────────────── */
+const COL_GROUPS = {
+    contact:  ['Company','Website','Contact Name','Contact Title','Contact Email','Specialty',
+                'Apollo Contact Email','Apollo Contact Phone','Apollo Contact LinkedIn',
+                'Apollo Company LinkedIn','Apollo Company Phone'],
+    icp:      ['Company','ICP Match','ICP Score','ICP Reason'],
+    research: ['Company','Practice Summary','Practice Size Signal','Billing Complexity'],
+    pain:     ['Company','Top Pain Point','Pain Signals','RCM Risk Level'],
+    personal: ['Company','Persona Fit','Decision Likelihood','AI Insight','Recommended Hook'],
+    emails:   ['Company','Email 1 Subject','Email 1 Body','Email 2 Subject','Email 2 Body','Email 3 Body','LinkedIn DM 1','LinkedIn DM 2','LinkedIn DM 3'],
+    sources:  ['Company',
+               'Agent 1 (ICP) Sources','Agent 2 (Research) Sources','Agent 3 (Pain) Sources',
+               'Agent 4 (Contact) Sources','Agent 5 (Personalisation) Sources','Agent 6 (Email) Sources',
+               'Apollo Company','Apollo Revenue','Apollo Employees','Apollo Technologies',
+               'Apollo EHR Signals','Apollo State','Apollo Country',
+               'Apollo Company LinkedIn','Apollo Company Phone',
+               'Apollo Contact Email','Apollo Contact Phone','Apollo Contact LinkedIn'],
+    skipped:  ['Company','Website','Contact Name','Contact Title','Contact Email',
+               'Specialty','ICP Score','ICP Reason'],
+};
+let _currentTab  = 'contact';
+let _resultsData = [];
+const _cellStore = {};
+let _appConfig   = {};   // populated on page-load from /api/config
+
+/* Build source strings for a row — uses tracked values when present,
+   falls back to inferred values for pre-update results.              */
+function _buildSources(row) {
+    const model = (_appConfig.model) ? _appConfig.model : 'claude-sonnet-4-20250514';
+    const ml    = 'Claude AI (' + model + ')';
+    const web   = (row['Website'] && row['Website'] !== 'nan') ? row['Website'] : '';
+    const hasAp = !!(row['Apollo Company'] || row['Apollo Revenue']);
+    return {
+        'Agent 1 (ICP) Sources':
+            row['Agent 1 (ICP) Sources'] ||
+            'CSV (company, industry, employees, specialty, state, country, revenue, contact title)' +
+            (hasAp ? ' + Apollo.io Enrichment' : '') + ' → ' + ml,
+        'Agent 2 (Research) Sources':
+            row['Agent 2 (Research) Sources'] ||
+            (web ? 'Website Scrape (' + web + ')' : 'CSV (company, specialty)') + ' → ' + ml,
+        'Agent 3 (Pain) Sources':
+            row['Agent 3 (Pain) Sources'] ||
+            'Agent 2 Research Summary + CSV (specialty, employees) → ' + ml,
+        'Agent 4 (Contact) Sources':
+            row['Agent 4 (Contact) Sources'] ||
+            'CSV (contact name, title) + Agent 2 Research Summary → ' + ml,
+        'Agent 5 (Personalisation) Sources':
+            row['Agent 5 (Personalisation) Sources'] ||
+            'CSV (company, website, specialty) + Agent 2 Summary + Agent 3 Top Pain → ' + ml,
+        'Agent 6 (Email) Sources':
+            row['Agent 6 (Email) Sources'] ||
+            'Agent 5 Personalisation Insight + Agent 3 Top Pain + CSV (company, contact, specialty) → ' + ml,
+    };
+}
+
+function switchTab(btn, tab) {
+    document.querySelectorAll('.col-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); _currentTab = tab; renderTable();
+}
+function loadResults() {
+    fetch('/api/results').then(r=>r.json()).then(data => {
+        _resultsData = data; renderTable();
+        if (data.length > 0) {
+            document.getElementById('results-section').style.display = '';
+            const processed = data.filter(r => String(r['ICP Match']).toLowerCase() !== 'skipped').length;
+            const skipped   = data.length - processed;
+            const badge     = document.getElementById('result-count-badge');
+            badge.textContent = skipped > 0
+                ? `${processed} processed · ${skipped} skipped`
+                : processed;
+            document.getElementById('export-btn').classList.remove('hidden');
+        }
+    });
+}
+function renderTable() {
+    const cols = COL_GROUPS[_currentTab] || COL_GROUPS.contact;
+    Object.keys(_cellStore).forEach(k => delete _cellStore[k]);
+    document.getElementById('table-head-row').innerHTML =
+        cols.map(c => `<th class="px-4 py-3 font-semibold whitespace-nowrap">${escHtml(c)}</th>`).join('');
+    const tb = document.getElementById('results-tbody');
+
+    /* On the Skipped tab show only skipped rows; everywhere else show all rows */
+    const isSkippedTab = (_currentTab === 'skipped');
+    const rowsToRender = isSkippedTab
+        ? _resultsData.filter(r => String(r['ICP Match']).toLowerCase() === 'skipped')
+        : _resultsData;
+
+    /* Update the Skipped tab button badge count */
+    const skippedBtn = document.getElementById('skipped-tab-btn');
+    if (skippedBtn) {
+        const skippedCount = _resultsData.filter(r => String(r['ICP Match']).toLowerCase() === 'skipped').length;
+        skippedBtn.innerHTML = skippedCount > 0
+            ? `⚠ Skipped <span style="background:rgba(217,119,6,.18);border-radius:9999px;padding:0 .45rem;font-size:.7rem;font-weight:700;margin-left:.3rem;">${skippedCount}</span>`
+            : '⚠ Skipped';
+    }
+
+    if (!rowsToRender.length) {
+        let emptyMsg;
+        if (isSkippedTab) {
+            const totalSkipped = _resultsData.filter(r => String(r['ICP Match']).toLowerCase() === 'skipped').length;
+            emptyMsg = totalSkipped === 0 && _resultsData.length > 0
+                ? 'All accounts passed ICP — no skipped accounts in this run.'
+                : 'No skipped accounts in this run.';
+        } else {
+            emptyMsg = 'No results yet.';
+        }
+        tb.innerHTML = `<tr><td colspan="${cols.length}" class="px-4 py-8 text-center text-default-400">${emptyMsg}</td></tr>`;
+        return;
+    }
+    const isSrcTab = (_currentTab === 'sources');
+    tb.innerHTML = rowsToRender.map((row,ri) => {
+        const srcMap    = isSrcTab ? _buildSources(row) : null;
+        const isSkipped = String(row['ICP Match']).toLowerCase() === 'skipped';
+        const rowClass  = isSkipped
+            ? 'bg-amber-50 border-l-4 border-amber-400'
+            : 'hover:bg-default-50 transition-colors';
+        return `<tr class="${rowClass}">` +
+        cols.map((c,ci) => {
+            const val = srcMap ? String(srcMap[c] != null ? srcMap[c] : (row[c] != null ? row[c] : ''))
+                               : String(row[c] != null ? row[c] : '');
+            // Special badge for the ICP Match "Skipped" cell
+            if (c === 'ICP Match' && isSkipped) {
+                return `<td class="px-4 py-3 whitespace-nowrap">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-300">
+                        ⚠ Skipped
+                    </span></td>`;
+            }
+            if (val.length > 60) {
+                const key = 'r'+ri+'c'+ci; _cellStore[key]={title:c,body:val};
+                return `<td class="px-4 py-3"><span class="cell-truncate block" data-cell="${key}" title="Click to view">${escHtml(val.substring(0,60))}… <span class="text-primary text-xs ml-1">▶ view</span></span></td>`;
+            }
+            return `<td class="px-4 py-3 whitespace-nowrap">${escHtml(val)}</td>`;
+        }).join('') + '</tr>';
+    }).join('');
+    tb.onclick = function(e) {
+        const span = e.target.closest('[data-cell]'); if (!span) return;
+        const d = _cellStore[span.getAttribute('data-cell')]; if (d) openCellModal(d.title,d.body);
+    };
+}
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function _showToast(msg, type) {
+    /* type: 'error' | 'info' | 'success' */
+    const colours = {
+        error:   { bg:'#fef2f2', border:'#fca5a5', text:'#dc2626', icon:'lucide--x-circle' },
+        info:    { bg:'#eff6ff', border:'#93c5fd', text:'#2563eb', icon:'lucide--info' },
+        success: { bg:'#f0fdf4', border:'#86efac', text:'#16a34a', icon:'lucide--check-circle' }
+    };
+    const c = colours[type] || colours.info;
+    const id = 'toast-' + Date.now();
+    const el = document.createElement('div');
+    el.id = id;
+    el.style.cssText = `
+        position:fixed;top:1.25rem;left:50%;transform:translateX(-50%) translateY(-8px);z-index:99999;
+        display:flex;align-items:center;gap:.65rem;
+        padding:.75rem 1.25rem;border-radius:.75rem;
+        background:${c.bg};border:1px solid ${c.border};color:${c.text};
+        font-size:.85rem;font-weight:600;
+        box-shadow:0 4px 20px rgba(0,0,0,.12);
+        opacity:0;transition:opacity .2s ease,transform .2s ease;
+        white-space:nowrap;pointer-events:none;`;
+    el.innerHTML = `<i class="iconify ${c.icon}" style="font-size:1rem;flex-shrink:0;"></i><span>${msg}</span>`;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-50%) translateY(-8px)';
+        setTimeout(() => el.remove(), 250);
+    }, 3200);
+}
+
+function _fetchExport(url, filename) {
+    fetch(url)
+        .then(res => {
+            if (res.ok) {
+                return res.blob().then(blob => {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                });
+            }
+            return res.json().then(d => {
+                _showToast(d.error || 'No results found.', 'error');
+            });
+        })
+        .catch(() => _showToast('Export failed. Please try again.', 'error'));
+}
+
+function exportCSV() { _fetchExport('/api/export', 'calyxr_hubspot_ready.csv'); }
+
+
+/* ────────────────────────────────────────────────
+   CELL EXPAND MODAL
+──────────────────────────────────────────────── */
+function openCellModal(title,body) {
+    document.getElementById('cell-modal-title').textContent = title;
+    document.getElementById('cell-modal-body').textContent  = body;
+    document.getElementById('cell-modal').classList.add('open');
+}
+function closeCellModal() { document.getElementById('cell-modal').classList.remove('open'); }
+document.getElementById('cell-modal').addEventListener('click',function(e){ if(e.target===this)closeCellModal(); });
+
+
+/* ────────────────────────────────────────────────
+   LOGS MODAL
+──────────────────────────────────────────────── */
+let _logLines=[], _logLevelFilter='', _logRefreshTimer=null;
+function openLogsModal() { document.getElementById('logs-modal').classList.add('open'); loadLogFiles(); loadLogLines(); }
+function closeLogsModal() { document.getElementById('logs-modal').classList.remove('open'); clearInterval(_logRefreshTimer); document.getElementById('log-auto-refresh').checked=false; }
+function loadLogFiles() {
+    fetch('/api/logs/files').then(r=>r.json()).then(d => {
+        const sel = document.getElementById('log-file-select'); const files = d.files||[];
+        if (!files.length) { sel.innerHTML='<option value="">No log files yet</option>'; return; }
+        sel.innerHTML = files.map(f=>`<option value="${escHtml(f.name)}">${escHtml(f.name)} (${f.size_kb} KB)</option>`).join('');
+    });
+}
+function loadLogLines() {
+    const fname = document.getElementById('log-file-select').value;
+    fetch('/api/logs?lines=500'+(fname?'&file='+encodeURIComponent(fname):'')).then(r=>r.json()).then(d => {
+        _logLines=d.lines||[]; document.getElementById('log-file-label').textContent=d.file||'—'; renderLogLines();
+    });
+}
+function renderLogLines() {
+    const filter=_logLevelFilter; const search=(document.getElementById('log-search').value||'').toLowerCase();
+    let lines=_logLines;
+    if (filter) lines=lines.filter(l=>l.includes('['+filter));
+    if (search) lines=lines.filter(l=>l.toLowerCase().includes(search));
+    const html=lines.map(l=>{
+        let cls='log-DEBUG';
+        if(l.includes('[INFO'))cls='log-INFO'; else if(l.includes('[WARNING'))cls='log-WARNING';
+        else if(l.includes('[ERROR'))cls='log-ERROR'; else if(l.includes('[CRITICAL'))cls='log-CRITICAL';
+        return `<div class="${cls}">${escHtml(l)}</div>`;
+    }).join('');
+    const el=document.getElementById('logs-content');
+    el.innerHTML=html||'<div class="p-4 text-default-500">No entries match.</div>';
+    el.scrollTop=el.scrollHeight;
+    document.getElementById('log-line-count').textContent=lines.length+' lines';
+}
+function setLogLevel(btn,lvl) { document.querySelectorAll('.log-lvl-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); _logLevelFilter=lvl; renderLogLines(); }
+function toggleLogRefresh() { clearInterval(_logRefreshTimer); if(document.getElementById('log-auto-refresh').checked) _logRefreshTimer=setInterval(loadLogLines,5000); }
+function downloadLog() { const f=document.getElementById('log-file-select').value; window.open('/api/logs/download'+(f?'?file='+encodeURIComponent(f):''),'_blank'); }
+document.getElementById('logs-modal').addEventListener('click',function(e){if(e.target===this)closeLogsModal();});
+
+
+/* ────────────────────────────────────────────────
+   EDIT APP INFO MODAL  (app name, company, footer)
+──────────────────────────────────────────────── */
+function openConfigModal() {
+    fetch('/api/config').then(r=>r.json()).then(cfg => {
+        document.getElementById('cfg-app-name').value     = cfg.app_name     || '';
+        document.getElementById('cfg-company-name').value = cfg.company_name || '';
+        document.getElementById('cfg-model').value        = cfg.model        || '';
+        document.getElementById('cfg-api-key-preview').value = cfg.api_key_preview || '';
+        const st = document.getElementById('cfg-api-status');
+        if (cfg.api_key_set) {
+            st.className='inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-green-50 text-green-600 border border-green-200';
+            st.innerHTML='✓ Connected';
+        } else {
+            st.className='inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 text-red-500 border border-red-200';
+            st.innerHTML='✗ Missing';
+        }
+        document.getElementById('cfg-footer-text').value = cfg.footer_text || '';
+        const msg=document.getElementById('cfg-save-msg'); msg.classList.add('hidden'); msg.textContent='';
+    });
+    document.getElementById('config-modal').classList.add('open');
+}
+function closeConfigModal() { document.getElementById('config-modal').classList.remove('open'); }
+function saveConfig() {
+    const payload = {
+        app_name:     document.getElementById('cfg-app-name').value.trim(),
+        company_name: document.getElementById('cfg-company-name').value.trim(),
+        footer_text:  document.getElementById('cfg-footer-text').value.trim(),
+    };
+    fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(r=>r.json()).then(d => {
+        if (d.success) {
+            const cfg=d.config;
+            if (cfg.app_name)     { document.getElementById('topbar-title').textContent=cfg.app_name; document.getElementById('page-heading').textContent=cfg.app_name; document.title=cfg.app_name; }
+            if (cfg.company_name) { document.getElementById('sidebar-brand').textContent=cfg.company_name; document.getElementById('topbar-brand-mobile').textContent=cfg.company_name; document.getElementById('breadcrumb-company').textContent=cfg.company_name; }
+            if (cfg.footer_text)  { document.getElementById('footer-brand').textContent=cfg.footer_text; }
+            const msg=document.getElementById('cfg-save-msg');
+            msg.textContent='✓ Saved successfully!'; msg.className='text-sm font-medium text-green-600'; msg.classList.remove('hidden');
+            setTimeout(()=>closeConfigModal(),1200);
+        }
+    }).catch(()=>{ const msg=document.getElementById('cfg-save-msg'); msg.textContent='✗ Failed to save.'; msg.className='text-sm font-medium text-red-500'; msg.classList.remove('hidden'); });
+}
+document.getElementById('config-modal').addEventListener('click',function(e){if(e.target===this)closeConfigModal();});
+
+
+/* ────────────────────────────────────────────────
+   PIPELINE QUICK SETTINGS  (ICP threshold / delay / max)
+──────────────────────────────────────────────── */
+function openPipelineSettings() {
+    fetch('/api/config').then(r=>r.json()).then(cfg => {
+        const icpS = document.getElementById('ps-icp-threshold');
+        icpS.value = cfg.icp_threshold || 40;
+        document.getElementById('ps-icp-val').textContent = icpS.value;
+        const delS = document.getElementById('ps-delay');
+        delS.value = cfg.delay_between || 1.5;
+        document.getElementById('ps-delay-val').textContent = parseFloat(delS.value).toFixed(1);
+        document.getElementById('ps-max-accounts').value = cfg.max_accounts || 0;
+        document.getElementById('ps-save-msg').classList.add('hidden');
+    });
+    document.getElementById('pipeline-settings-modal').classList.add('open');
+}
+function closePipelineSettings() { document.getElementById('pipeline-settings-modal').classList.remove('open'); }
+function savePipelineSettings() {
+    const payload = {
+        icp_threshold: parseInt(document.getElementById('ps-icp-threshold').value, 10),
+        delay_between: parseFloat(document.getElementById('ps-delay').value),
+        max_accounts:  parseInt(document.getElementById('ps-max-accounts').value, 10) || 0,
+    };
+    const msgEl = document.getElementById('ps-save-msg');
+    fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(r=>r.json()).then(d => {
+        if (d.success) {
+            msgEl.textContent='✓ Saved!'; msgEl.className='text-xs font-semibold text-green-600'; msgEl.classList.remove('hidden');
+            setTimeout(()=>closePipelineSettings(),900);
+        }
+    }).catch(()=>{ msgEl.textContent='✗ Save failed.'; msgEl.className='text-xs font-semibold text-red-500'; msgEl.classList.remove('hidden'); });
+}
+document.getElementById('pipeline-settings-modal').addEventListener('click',function(e){if(e.target===this)closePipelineSettings();});
+
+
+/* ────────────────────────────────────────────────
+   RUN HISTORY PANEL
+──────────────────────────────────────────────── */
+let _historyRunId=null, _historyData=[], _histCurTab='contact', _historyRunMeta=null;
+const _histCellStore = {};
+
+// All loaded runs (master list — never mutated by filters)
+let _allHistoryRuns = [];
+
+// ── Status colour map (shared) ────────────────────────────────────────────────
+const _HIST_ST_MAP = {
+    running:  'bg-green-50 text-green-600 border-green-200',
+    complete: 'bg-indigo-50 text-indigo-600 border-indigo-200',
+    error:    'bg-red-50 text-red-500 border-red-200',
+};
+
+function _histRunRow(r) {
+    const dur = r.duration_seconds ? formatDuration(r.duration_seconds) : '—';
+    const sc  = _HIST_ST_MAP[r.status] || 'bg-default-50 text-default-500 border-default-200';
+    const sl  = r.status.charAt(0).toUpperCase() + r.status.slice(1);
+    const uName     = r.user_name  || '—';
+    const uEmail    = r.user_email || '';
+    const uInitials = uName !== '—' ? uName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase() : '?';
+    const campName  = r.campaign_name || '—';
+    const campBadge = campName !== '—'
+        ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-600 border border-violet-200 whitespace-nowrap">${escHtml(campName)}</span>`
+        : `<span class="text-default-400 text-xs">Default</span>`;
+    return `<tr class="hover:bg-default-50 transition-colors">
+        <td class="px-4 py-3 font-bold text-default-900">#${r.id}</td>
+        <td class="px-4 py-3 text-default-600 text-xs whitespace-nowrap">${escHtml(r.started_at||'—')}</td>
+        <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+                <div class="size-7 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-xs flex-shrink-0" title="${escHtml(uEmail)}">${escHtml(uInitials)}</div>
+                <span class="text-xs text-default-700 whitespace-nowrap">${escHtml(uName)}</span>
+            </div>
+        </td>
+        <td class="px-4 py-3">${campBadge}</td>
+        <td class="px-4 py-3 text-default-500 text-xs max-w-[120px] truncate" title="${escHtml(r.csv_filename)}">${escHtml(r.csv_filename)}</td>
+        <td class="px-4 py-3 text-center">${r.total_accounts||0}</td>
+        <td class="px-4 py-3 text-center font-semibold text-green-600">${r.processed||0}</td>
+        <td class="px-4 py-3 text-center text-amber-600">${r.skipped||0}</td>
+        <td class="px-4 py-3 text-xs text-default-500">${dur}</td>
+        <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${sc}">${sl}</span></td>
+        <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+                <button onclick="loadHistoryRun(${r.id})" class="kt-btn kt-btn-outline text-xs px-2.5 py-1">View</button>
+                <button onclick="_fetchExport('/api/history/${r.id}/export','calyxr_run_${r.id}.csv')" class="kt-btn kt-btn-outline text-xs px-2.5 py-1 flex items-center gap-1">
+                    <i class="iconify lucide--download text-xs"></i> CSV
+                </button>
+            </div>
+        </td>
+    </tr>`;
+}
+
+function _renderHistoryRows(runs) {
+    const tb = document.getElementById('history-tbody');
+    if (!tb) return;
+    const badge = document.getElementById('history-count-badge');
+    if (badge) badge.textContent = runs.length;
+    if (!runs.length) {
+        tb.innerHTML = '<tr><td colspan="11" class="px-4 py-8 text-center text-default-400">No matching runs.</td></tr>';
+        return;
+    }
+    tb.innerHTML = runs.map(_histRunRow).join('');
+}
+
+function _populateHistoryFilters(runs) {
+    // Build unique sorted option sets
+    const campaigns = [...new Set(runs.map(r => r.campaign_name || '—'))].sort();
+    const users     = [...new Set(runs.map(r => r.user_name     || '—'))].sort();
+
+    const selCamp = document.getElementById('hist-filter-campaign');
+    const selUser = document.getElementById('hist-filter-user');
+    if (!selCamp || !selUser) return;
+
+    // Preserve current selections across refreshes
+    const prevCamp = selCamp.value;
+    const prevUser = selUser.value;
+
+    selCamp.innerHTML = '<option value="">All Campaigns</option>' +
+        campaigns.map(c => `<option value="${escHtml(c)}"${c===prevCamp?' selected':''}>${escHtml(c)}</option>`).join('');
+    selUser.innerHTML = '<option value="">All Users</option>' +
+        users.map(u => `<option value="${escHtml(u)}"${u===prevUser?' selected':''}>${escHtml(u)}</option>`).join('');
+}
+
+function _applyHistoryFilters() {
+    const camp    = (document.getElementById('hist-filter-campaign')?.value  || '').trim();
+    const user    = (document.getElementById('hist-filter-user')?.value      || '').trim();
+    const dateFrom = document.getElementById('hist-filter-date-from')?.value || '';
+    const dateTo   = document.getElementById('hist-filter-date-to')?.value   || '';
+    const info     = document.getElementById('hist-filter-info');
+
+    let filtered = _allHistoryRuns;
+
+    if (camp) {
+        filtered = filtered.filter(r => (r.campaign_name || '—') === camp);
+    }
+    if (user) {
+        filtered = filtered.filter(r => (r.user_name || '—') === user);
+    }
+    if (dateFrom) {
+        // started_at format: "YYYY-MM-DD HH:MM:SS"
+        filtered = filtered.filter(r => r.started_at && r.started_at.substring(0,10) >= dateFrom);
+    }
+    if (dateTo) {
+        filtered = filtered.filter(r => r.started_at && r.started_at.substring(0,10) <= dateTo);
+    }
+
+    const hasFilter = camp || user || dateFrom || dateTo;
+    if (info) {
+        info.textContent = hasFilter
+            ? `Showing ${filtered.length} of ${_allHistoryRuns.length} runs`
+            : '';
+    }
+
+    _renderHistoryRows(filtered);
+}
+
+function _clearHistoryFilters() {
+    const ids = ['hist-filter-campaign','hist-filter-user','hist-filter-date-from','hist-filter-date-to'];
+    ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    const info = document.getElementById('hist-filter-info');
+    if (info) info.textContent = '';
+    _renderHistoryRows(_allHistoryRuns);
+    // Reset badge to total
+    const badge = document.getElementById('history-count-badge');
+    if (badge) badge.textContent = _allHistoryRuns.length;
+}
+
+function loadHistory() {
+    const tb = document.getElementById('history-tbody');
+    if (tb) tb.innerHTML = '<tr><td colspan="11" class="px-4 py-8 text-center text-default-400">Loading…</td></tr>';
+    fetch('/api/history').then(r=>r.json()).then(runs => {
+        _allHistoryRuns = runs;
+        _populateHistoryFilters(runs);
+        _applyHistoryFilters();   // respects any existing filter values
+    }).catch(() => {
+        if (tb) tb.innerHTML = '<tr><td colspan="11" class="px-4 py-6 text-center text-red-400">Failed to load history.</td></tr>';
+    });
+}
+function formatDuration(s) { if(!s)return'—'; if(s<60)return Math.round(s)+'s'; return Math.floor(s/60)+'m '+Math.round(s%60)+'s'; }
+function loadHistoryRun(runId) {
+    _historyRunId=runId;
+    /* Grab run summary metadata (skipped count, etc.) from the already-loaded list */
+    _historyRunMeta = (_allHistoryRuns || []).find(r => r.id === runId) || null;
+    const lbl=document.getElementById('history-run-label'); if(lbl) lbl.textContent='#'+runId;
+    const sec=document.getElementById('history-results-section'); if(sec) sec.style.display='';
+    const tb=document.getElementById('hist-results-tbody'); if(tb) tb.innerHTML='<tr><td colspan="10" class="px-4 py-6 text-center text-default-400">Loading…</td></tr>';
+    fetch('/api/history/'+runId+'/results').then(r=>r.json()).then(data => {
+        _historyData=data;
+        const badge=document.getElementById('history-result-count-badge'); if(badge) badge.textContent=data.length;
+        renderHistTable();
+        const s=document.getElementById('history-results-section'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+}
+function switchHistTab(btn,tab) { document.querySelectorAll('.hist-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); _histCurTab=tab; renderHistTable(); }
+function renderHistTable() {
+    const cols=COL_GROUPS[_histCurTab]||COL_GROUPS.contact;
+    Object.keys(_histCellStore).forEach(k=>delete _histCellStore[k]);
+    const hr=document.getElementById('hist-table-head-row'); if(hr) hr.innerHTML=cols.map(c=>`<th class="px-4 py-3 font-semibold whitespace-nowrap">${escHtml(c)}</th>`).join('');
+    const tb=document.getElementById('hist-results-tbody'); if(!tb) return;
+
+    /* On the Skipped tab show only skipped rows; everywhere else show all rows */
+    const isSkippedTab = (_histCurTab === 'skipped');
+    const rowsToRender = isSkippedTab
+        ? _historyData.filter(r => String(r['ICP Match']).toLowerCase() === 'skipped')
+        : _historyData;
+
+    /* Update the hist Skipped tab button badge count */
+    const histSkippedBtn = document.getElementById('hist-skipped-tab-btn');
+    if (histSkippedBtn) {
+        const skippedCount = _historyData.filter(r => String(r['ICP Match']).toLowerCase() === 'skipped').length;
+        histSkippedBtn.innerHTML = skippedCount > 0
+            ? `⚠ Skipped <span style="background:rgba(217,119,6,.18);border-radius:9999px;padding:0 .45rem;font-size:.7rem;font-weight:700;margin-left:.3rem;">${skippedCount}</span>`
+            : '⚠ Skipped';
+    }
+
+    if (!rowsToRender.length) {
+        let emptyMsg = isSkippedTab ? 'No skipped accounts in this run.' : 'No results.';
+        /* If the run summary says there WERE skipped accounts but the DB has none,
+           show a helpful diagnostic instead of a confusing empty state.            */
+        if (isSkippedTab && _historyRunMeta && (_historyRunMeta.skipped || 0) > 0) {
+            emptyMsg = `<div class="inline-flex flex-col items-center gap-2 text-amber-700">
+                <i class="iconify tabler--alert-triangle text-2xl text-amber-500"></i>
+                <span class="font-semibold">This run had ${_historyRunMeta.skipped} skipped account(s)</span>
+                <span class="text-xs text-default-500 max-w-sm text-center">The detailed skipped-account records were not saved to the database — this happens with runs from an older version of the software.<br>
+                Please <strong>re-run the pipeline</strong> with the latest code to capture skipped account details in history.</span>
+            </div>`;
+        }
+        tb.innerHTML=`<tr><td colspan="${cols.length}" class="px-4 py-8 text-center text-default-400">${emptyMsg}</td></tr>`; return; }
+    const isSrcTab = (_histCurTab === 'sources');
+    tb.innerHTML = rowsToRender.map((row,ri) => {
+        const srcMap = isSrcTab ? _buildSources(row) : null;
+        const isSkipped = String(row['ICP Match']).toLowerCase() === 'skipped';
+        const rowClass = isSkipped ? 'bg-amber-50 border-l-4 border-amber-400' : 'hover:bg-default-50 transition-colors';
+        return `<tr class="${rowClass}">` +
+        cols.map((c,ci) => {
+            const val = srcMap ? String(srcMap[c] != null ? srcMap[c] : (row[c] != null ? row[c] : ''))
+                               : String(row[c] != null ? row[c] : '');
+            /* Special badge for ICP Match "Skipped" cell */
+            if (c === 'ICP Match' && isSkipped) {
+                return `<td class="px-4 py-3 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-300">⚠ Skipped</span></td>`;
+            }
+            if (val.length>60) { const key='hr'+ri+'c'+ci; _histCellStore[key]={title:c,body:val};
+                return `<td class="px-4 py-3"><span class="cell-truncate block" data-hcell="${key}">${escHtml(val.substring(0,60))}… <span class="text-primary text-xs ml-1">▶ view</span></span></td>`; }
+            return `<td class="px-4 py-3 whitespace-nowrap">${escHtml(val)}</td>`;
+        }).join('') + '</tr>';
+    }).join('');
+    tb.onclick = function(e) { const span=e.target.closest('[data-hcell]'); if(!span)return; const d=_histCellStore[span.getAttribute('data-hcell')]; if(d)openCellModal(d.title,d.body); };
+}
+function exportHistoryRun() { if(_historyRunId) _fetchExport('/api/history/'+_historyRunId+'/export', 'calyxr_run_'+_historyRunId+'.csv'); }
+
+
+/* ────────────────────────────────────────────────
+   AGENT PROMPTS PANEL
+──────────────────────────────────────────────── */
+const PROMPT_AGENTS = ['icp','research','pain','contact','personalization','email'];
+
+function _copyPrompt(taId) {
+    const ta = document.getElementById(taId);
+    if (!ta || !ta.value.trim()) return;
+    navigator.clipboard.writeText(ta.value).then(() => {
+        /* Find the copy button that triggered this and show brief feedback */
+        const btn = document.querySelector(`[data-copy-ta="${taId}"]`);
+        if (!btn) return;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="iconify lucide--check text-xs"></i> Copied!';
+        btn.classList.add('text-green-600', 'border-green-300', 'bg-green-50');
+        btn.classList.remove('text-default-500');
+        setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.classList.remove('text-green-600', 'border-green-300', 'bg-green-50');
+            btn.classList.add('text-default-500');
+        }, 1800);
+    }).catch(() => alert('Copy failed – please copy manually.'));
+}
+
+function loadPrompts() {
+    fetch('/api/prompts').then(r=>r.json()).then(data => {
+        PROMPT_AGENTS.forEach(key => {
+            const info = data[key]; if (!info) return;
+            const ta = document.getElementById('prompt-ta-'+key); if(ta) ta.value = info.system_prompt;
+            const badge = document.getElementById('prompt-badge-'+key);
+            if (badge) {
+                if (info.is_default) {
+                    badge.className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200';
+                    badge.textContent='Default';
+                } else {
+                    badge.className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-200';
+                    badge.textContent='Customized';
+                }
+            }
+            const ts = document.getElementById('prompt-ts-'+key);
+            if (ts && info.updated_at) ts.textContent = 'Last updated: '+info.updated_at;
+        });
+    }).catch(err => console.error('Failed to load prompts:', err));
+}
+
+function savePrompt(key) {
+    const ta = document.getElementById('prompt-ta-'+key); if(!ta) return;
+    const newPrompt = ta.value.trim();
+    if (!newPrompt) { alert('Prompt cannot be empty.'); return; }
+    const msgEl = document.getElementById('prompt-msg-'+key);
+    if (msgEl) { msgEl.textContent='Saving…'; msgEl.className='text-xs text-default-400 font-medium'; }
+    fetch('/api/prompts/'+key, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ system_prompt: newPrompt }),
+    }).then(r=>r.json()).then(d => {
+        if (d.success) {
+            const badge=document.getElementById('prompt-badge-'+key);
+            if (badge) {
+                if (d.is_default) {
+                    badge.className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200';
+                    badge.textContent='Default';
+                } else {
+                    badge.className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-200';
+                    badge.textContent='Customized';
+                }
+            }
+            const ts=document.getElementById('prompt-ts-'+key); if(ts&&d.updated_at) ts.textContent='Last updated: '+d.updated_at;
+            if (msgEl) { msgEl.textContent='✓ Saved!'; msgEl.className='text-xs text-green-600 font-semibold'; setTimeout(()=>{ if(msgEl)msgEl.textContent=''; },3000); }
+        }
+    }).catch(()=>{ if(msgEl){ msgEl.textContent='✗ Save failed.'; msgEl.className='text-xs text-red-500 font-medium'; } });
+}
+
+function resetPrompt(key) {
+    if (!confirm('Reset this prompt to the factory default?')) return;
+    fetch('/api/prompts/'+key+'/reset', { method:'POST' })
+    .then(r=>r.json()).then(d => { if(d.success) { loadPrompts(); } })
+    .catch(err => console.error('Reset failed:', err));
+}
+
+
+/* ────────────────────────────────────────────────
+   USER MANAGEMENT
+──────────────────────────────────────────────── */
+let _allRoles = [];
+
+async function loadUsers() {
+    const tb = document.getElementById('users-tbody');
+    if (tb) tb.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-default-400">Loading…</td></tr>';
+
+    // Load roles for dropdowns (cache after first load)
+    if (!_allRoles.length) {
+        try {
+            const r = await fetch('/api/roles');
+            if (r.ok) _allRoles = await r.json();
+        } catch(e) {}
+    }
+
+    try {
+        const r = await fetch('/api/users');
+        if (!r.ok) {
+            if (tb) tb.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-400">Insufficient permissions to view users.</td></tr>';
+            return;
+        }
+        const users = await r.json();
+        const badge = document.getElementById('users-count-badge');
+        if (badge) badge.textContent = users.length;
+
+        if (!users.length) {
+            if (tb) tb.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-default-400">No users found.</td></tr>';
+            return;
+        }
+
+        if (tb) tb.innerHTML = users.map(u => {
+            const initials = (u.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+            const rc = roleBadgeClass(u.role);
+            const rl = roleLabel(u.role);
+            const statusBadge = u.is_active
+                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">Active</span>'
+                : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-500 border border-red-200">Inactive</span>';
+            const roleOpts = _allRoles.map(r =>
+                `<option value="${r.id}" ${r.name === u.role ? 'selected' : ''}>${roleLabel(r.name)}</option>`
+            ).join('');
+            return `<tr class="hover:bg-default-50 transition-colors">
+                <td class="px-4 py-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="size-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-xs flex-shrink-0">${escHtml(initials)}</div>
+                        <span class="font-medium text-default-900 text-sm">${escHtml(u.name)}</span>
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-sm text-default-600">${escHtml(u.email)}</td>
+                <td class="px-4 py-3">
+                    <select onchange="changeUserRole(${u.id}, this.value)"
+                            class="kt-input text-xs py-1 px-2 rounded-lg min-w-32">
+                        ${roleOpts}
+                    </select>
+                </td>
+                <td class="px-4 py-3">${statusBadge}</td>
+                <td class="px-4 py-3 text-xs text-default-400 whitespace-nowrap">${escHtml(u.created_at||'—')}</td>
+                <td class="px-4 py-3 text-xs text-default-400 whitespace-nowrap">${escHtml(u.last_login||'Never')}</td>
+                <td class="px-4 py-3">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button onclick="toggleActive(${u.id}, ${!u.is_active})"
+                                class="kt-btn kt-btn-outline text-xs px-2.5 py-1">
+                            ${u.is_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                        ${(_canAdminPw(u)) ? `
+                        <button onclick="openChpwAdmin(${u.id}, '${escHtml(u.name).replace(/'/g,"&#39;")}')"
+                                class="kt-btn text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 rounded-lg transition-colors"
+                                title="Set password for this user">
+                            🔑 Password
+                        </button>` : ''}
+                        <button onclick="deleteUserConfirm(${u.id}, '${escHtml(u.name).replace(/'/g,"&#39;")}')"
+                                class="kt-btn text-xs px-2.5 py-1 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 rounded-lg transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+    } catch(e) {
+        if (tb) tb.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-red-400">Failed to load users.</td></tr>';
+    }
+}
+
+async function changeUserRole(userId, roleId) {
+    try {
+        const r = await fetch('/api/users/'+userId, {
+            method:'PUT', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ role_id: parseInt(roleId) }),
+        });
+        const d = await r.json();
+        if (!r.ok) { alert(d.error || 'Failed to change role'); loadUsers(); }
+    } catch(e) { alert('Network error'); loadUsers(); }
+}
+
+async function toggleActive(userId, newActive) {
+    try {
+        const r = await fetch('/api/users/'+userId, {
+            method:'PUT', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ is_active: newActive }),
+        });
+        const d = await r.json();
+        if (d.success) loadUsers(); else alert(d.error || 'Failed to update');
+    } catch(e) { alert('Network error'); }
+}
+
+async function deleteUserConfirm(userId, name) {
+    if (!confirm('Delete user "' + name + '"?\nThis action cannot be undone.')) return;
+    try {
+        const r = await fetch('/api/users/'+userId, { method:'DELETE' });
+        const d = await r.json();
+        if (d.success) loadUsers(); else alert(d.error || 'Failed to delete');
+    } catch(e) { alert('Network error'); }
+}
+
+
+/* ════════════════════════════════════════════════════════
+   CHANGE / SET PASSWORD MODAL
+════════════════════════════════════════════════════════ */
+let _chpwTargetId = null;   // null = self-change, number = admin changing user id
+
+function _canAdminPw(u) {
+    // Show Set Password button only if current viewer is super_admin or admin
+    // and target is not super_admin (unless current viewer is super_admin)
+    const myRole = window._myRole || '';
+    if (myRole !== 'super_admin' && myRole !== 'admin') return false;
+    if (u.role === 'super_admin' && myRole !== 'super_admin') return false;
+    return true;
+}
+
+function openChpwSelf() {
+    _chpwTargetId = null;
+    document.getElementById('chpw-modal-title').textContent = 'Change My Password';
+    document.getElementById('chpw-current-wrap').style.display = '';
+    document.getElementById('chpw-current').value  = '';
+    document.getElementById('chpw-new').value      = '';
+    document.getElementById('chpw-confirm').value  = '';
+    const msg = document.getElementById('chpw-msg');
+    msg.className = 'hidden p-3 rounded-lg text-sm font-medium';
+    msg.textContent = '';
+    document.getElementById('chpw-modal').classList.add('open');
+}
+
+function openChpwAdmin(userId, userName) {
+    _chpwTargetId = userId;
+    document.getElementById('chpw-modal-title').textContent = `Set Password — ${userName}`;
+    document.getElementById('chpw-current-wrap').style.display = 'none';
+    document.getElementById('chpw-current').value  = '';
+    document.getElementById('chpw-new').value      = '';
+    document.getElementById('chpw-confirm').value  = '';
+    const msg = document.getElementById('chpw-msg');
+    msg.className = 'hidden p-3 rounded-lg text-sm font-medium';
+    msg.textContent = '';
+    document.getElementById('chpw-modal').classList.add('open');
+}
+
+function closeChpwModal() {
+    document.getElementById('chpw-modal').classList.remove('open');
+}
+
+async function submitChpw() {
+    const newPw     = document.getElementById('chpw-new').value.trim();
+    const confirmPw = document.getElementById('chpw-confirm').value.trim();
+    const msg       = document.getElementById('chpw-msg');
+
+    function _showMsg(text, isError) {
+        msg.textContent = text;
+        msg.className   = 'p-3 rounded-lg text-sm font-medium ' +
+            (isError ? 'bg-red-50 text-red-600 border border-red-200'
+                     : 'bg-green-50 text-green-700 border border-green-200');
+    }
+
+    if (!newPw || !confirmPw) return _showMsg('Please fill in all required fields.', true);
+    if (newPw !== confirmPw)  return _showMsg('New passwords do not match.', true);
+    if (newPw.length < 8)     return _showMsg('Password must be at least 8 characters.', true);
+
+    try {
+        let res, body;
+        if (_chpwTargetId === null) {
+            // Self-change
+            const currentPw = document.getElementById('chpw-current').value.trim();
+            if (!currentPw) return _showMsg('Please enter your current password.', true);
+            res = await fetch('/api/auth/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_password: currentPw, new_password: newPw, confirm_password: confirmPw }),
+            });
+        } else {
+            // Admin setting another user's password
+            res = await fetch(`/api/users/${_chpwTargetId}/password`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ new_password: newPw, confirm_password: confirmPw }),
+            });
+        }
+        body = await res.json();
+        if (!res.ok) return _showMsg(body.error || 'Failed to update password.', true);
+        _showMsg(body.message || 'Password updated successfully!', false);
+        setTimeout(closeChpwModal, 1500);
+    } catch(e) {
+        _showMsg('Network error — please try again.', true);
+    }
+}
+
+// Close on backdrop click
+document.getElementById('chpw-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeChpwModal();
+});
+
+
+/* ════════════════════════════════════════════════════════
+   ROLE & PERMISSION MANAGER
+════════════════════════════════════════════════════════ */
+const _PERM_LABELS = {
+    can_run_pipeline:   { label: 'Run Pipeline',       desc: 'Execute pipeline against CSV data' },
+    can_view_results:   { label: 'View Results',        desc: 'See pipeline output and history' },
+    can_export:         { label: 'Export Results',      desc: 'Download output as CSV/Excel' },
+    can_manage_prompts: { label: 'Manage Prompts',      desc: 'Customize agent system prompts' },
+    can_manage_config:  { label: 'Edit App Settings',   desc: 'Change app name, model, thresholds' },
+    can_manage_users:   { label: 'User Management',     desc: 'Create, edit, and delete users' },
+};
+
+const _ROLE_BADGE_STYLES = {
+    super_admin: 'background:#fef3c7;color:#92400e',
+    admin:       'background:#ede9fe;color:#5b21b6',
+    analyst:     'background:#dbeafe;color:#1e40af',
+    viewer:      'background:#f1f5f9;color:#475569',
+};
+
+async function loadRolesPanel() {
+    const grid = document.getElementById('roles-grid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="kt-card"><div class="kt-card-content p-8 text-center text-default-400 text-sm">Loading…</div></div>';
+    try {
+        const r = await fetch('/api/roles');
+        if (!r.ok) throw new Error('Failed to fetch');
+        const roles = await r.json();
+        grid.innerHTML = roles.map(role => _renderRoleCard(role)).join('');
+    } catch(e) {
+        grid.innerHTML = '<div class="kt-card"><div class="kt-card-content p-6 text-center text-red-500 text-sm">Failed to load roles</div></div>';
+    }
+}
+
+function _renderRoleCard(role) {
+    const locked   = role.name === 'super_admin';
+    const badgeStyle = _ROLE_BADGE_STYLES[role.name] || 'background:#f1f5f9;color:#475569';
+    const permRows = Object.entries(_PERM_LABELS).map(([key, meta]) => {
+        const checked   = role[key] ? 'checked' : '';
+        const disabled  = locked  ? 'disabled' : '';
+        const toggleId  = `perm-${role.id}-${key}`;
+        return `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .1rem;border-bottom:1px solid var(--border-color,#e2e8f0);">
+            <div>
+                <div style="font-size:.8rem;font-weight:600;color:var(--text-default-800,#1e293b)">${meta.label}</div>
+                <div style="font-size:.7rem;color:var(--text-default-500,#94a3b8);margin-top:1px">${meta.desc}</div>
+            </div>
+            <label style="position:relative;display:inline-flex;align-items:center;cursor:${locked?'not-allowed':'pointer'}">
+                <input type="checkbox" id="${toggleId}" ${checked} ${disabled}
+                       style="position:absolute;opacity:0;width:0;height:0"
+                       onchange="_updateRoleToggle(${role.id})">
+                <span style="display:inline-block;width:36px;height:20px;border-radius:10px;transition:.2s;
+                             background:${role[key]?'#6366f1':'#cbd5e1'};position:relative;opacity:${locked?'.5':'1'}">
+                    <span id="knob-${toggleId}" style="position:absolute;top:2px;left:${role[key]?'18px':'2px'};
+                                width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;
+                                box-shadow:0 1px 3px rgba(0,0,0,.25)"></span>
+                </span>
+            </label>
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="kt-card" id="role-card-${role.id}">
+        <div class="kt-card-content p-5">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <div style="width:40px;height:40px;border-radius:.6rem;display:flex;align-items:center;
+                                justify-content:center;${badgeStyle};font-weight:800;font-size:.85rem">
+                        ${role.name.substring(0,2).toUpperCase()}
+                    </div>
+                    <div>
+                        <div style="font-weight:700;font-size:.95rem;color:var(--text-default-900,#0f172a)">
+                            ${role.name.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}
+                        </div>
+                        <div style="font-size:.72rem;color:var(--text-default-500,#94a3b8)">${role.description||''}</div>
+                    </div>
+                </div>
+                ${locked ? `<span style="font-size:.68rem;padding:.25rem .6rem;border-radius:999px;
+                                        background:#fef3c7;color:#92400e;font-weight:600">
+                                🔒 Locked
+                            </span>` : ''}
+            </div>
+            <div style="margin-bottom:1rem">${permRows}</div>
+            ${locked ? '' : `
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:.75rem;padding-top:.25rem">
+                <span id="role-save-msg-${role.id}" style="font-size:.75rem;color:#10b981;display:none">✓ Saved</span>
+                <button onclick="saveRole(${role.id})"
+                        class="kt-btn kt-btn-primary text-xs px-4 py-1.5 flex items-center gap-1.5">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Save Changes
+                </button>
+            </div>`}
+        </div>
+    </div>`;
+}
+
+async function saveRole(roleId) {
+    const perms = {};
+    Object.keys(_PERM_LABELS).forEach(key => {
+        const el = document.getElementById(`perm-${roleId}-${key}`);
+        if (el) perms[key] = el.checked;
+    });
+    try {
+        const r = await fetch(`/api/roles/${roleId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(perms),
+        });
+        const d = await r.json();
+        if (!r.ok) { alert(d.error || 'Failed to save'); return; }
+        // Show saved confirmation then refresh card
+        const msg = document.getElementById(`role-save-msg-${roleId}`);
+        if (msg) { msg.style.display = ''; setTimeout(() => msg.style.display = 'none', 2500); }
+        // Refresh toggle knob colors from saved data
+        Object.entries(perms).forEach(([key, val]) => {
+            const toggleId = `perm-${roleId}-${key}`;
+            const span  = document.getElementById(toggleId)?.parentElement?.querySelector('span');
+            const knob  = document.getElementById(`knob-${toggleId}`);
+            if (span) span.style.background = val ? '#6366f1' : '#cbd5e1';
+            if (knob) knob.style.left = val ? '18px' : '2px';
+        });
+    } catch(e) { alert('Network error'); }
+}
+
+function _updateRoleToggle(roleId) {
+    // Sync toggle visuals when checkbox is clicked
+    Object.keys(_PERM_LABELS).forEach(key => {
+        const toggleId = `perm-${roleId}-${key}`;
+        const cb   = document.getElementById(toggleId);
+        const knob = document.getElementById(`knob-${toggleId}`);
+        const span = cb?.parentElement?.querySelector('span');
+        if (!cb) return;
+        if (span) span.style.background = cb.checked ? '#6366f1' : '#cbd5e1';
+        if (knob) knob.style.left = cb.checked ? '18px' : '2px';
+    });
+}
+
+
+function openAddUserModal() {
+    document.getElementById('add-user-name').value     = '';
+    document.getElementById('add-user-email').value    = '';
+    document.getElementById('add-user-password').value = '';
+    const sel = document.getElementById('add-user-role');
+    if (_allRoles.length) {
+        sel.innerHTML = _allRoles.map(r =>
+            `<option value="${r.id}">${roleLabel(r.name)}</option>`
+        ).join('');
+    } else {
+        fetch('/api/roles').then(r=>r.json()).then(roles => {
+            _allRoles = roles;
+            sel.innerHTML = roles.map(r => `<option value="${r.id}">${roleLabel(r.name)}</option>`).join('');
+        });
+    }
+    const msgEl = document.getElementById('add-user-msg');
+    msgEl.classList.add('hidden'); msgEl.textContent = '';
+    document.getElementById('add-user-modal').classList.add('open');
+}
+function closeAddUserModal() { document.getElementById('add-user-modal').classList.remove('open'); }
+async function saveNewUser() {
+    const name     = document.getElementById('add-user-name').value.trim();
+    const email    = document.getElementById('add-user-email').value.trim();
+    const password = document.getElementById('add-user-password').value;
+    const role_id  = parseInt(document.getElementById('add-user-role').value);
+    const msgEl    = document.getElementById('add-user-msg');
+
+    function showMsg(msg, ok) {
+        msgEl.textContent = msg;
+        msgEl.className = (ok ? 'p-3 rounded-lg text-sm font-medium bg-green-50 text-green-700 border border-green-200'
+                               : 'p-3 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200');
+        msgEl.classList.remove('hidden');
+    }
+
+    if (!name || !email || !password) { showMsg('All fields are required.', false); return; }
+    if (password.length < 8)          { showMsg('Password must be at least 8 characters.', false); return; }
+
+    try {
+        const r = await fetch('/api/users', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ name, email, password, role_id }),
+        });
+        const d = await r.json();
+        if (r.ok) {
+            showMsg('User created successfully!', true);
+            setTimeout(() => { closeAddUserModal(); loadUsers(); }, 900);
+        } else {
+            showMsg(d.error || 'Failed to create user.', false);
+        }
+    } catch(e) { showMsg('Network error — please try again.', false); }
+}
+document.getElementById('add-user-modal').addEventListener('click',function(e){if(e.target===this)closeAddUserModal();});
+
+
+/* ────────────────────────────────────────────────
+   INIT — Load user info, config, pipeline status
+──────────────────────────────────────────────── */
+(async function initApp() {
+    // 1. Load current user + permissions
+    try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) { window.location.href = '/login'; return; }
+        const data  = await res.json();
+        const user  = data.user;
+        const perms = data.permissions;
+
+        // Populate topbar user info
+        const initials = (user.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+        const avatarEl = document.getElementById('user-avatar-circle');
+        if (avatarEl) avatarEl.textContent = initials;
+        const ddAvatarEl = document.getElementById('dd-avatar-circle');
+        if (ddAvatarEl) ddAvatarEl.textContent = initials;
+
+        const nameEl = document.getElementById('topbar-user-name');
+        if (nameEl) nameEl.textContent = user.name;
+
+        const ddName = document.getElementById('dd-user-name');
+        if (ddName) ddName.textContent = user.name;
+
+        const ddEmail = document.getElementById('dd-user-email');
+        if (ddEmail) ddEmail.textContent = user.email;
+
+        const ddRole = document.getElementById('dd-user-role-badge');
+        if (ddRole) {
+            ddRole.className = 'text-xs px-1.5 py-0.5 rounded mt-1 inline-block font-medium ' + roleBadgeClass(user.role);
+            ddRole.textContent = roleLabel(user.role);
+        }
+
+        // Store current user role for use in user table rendering
+        window._myUserId = user.id;
+        window._myRole   = user.role;
+
+        // Apply role-based access control
+        applyRBAC(perms);
+
+    } catch(e) {
+        console.error('Failed to load user info:', e);
+    }
+
+    // 2. Wire logout button — reset pipeline state then sign out
+    document.getElementById('topbar-logout-btn').addEventListener('click', async function() {
+        try { await fetch('/api/pipeline/reset', { method:'POST' }); } catch(e) {}
+        try { await fetch('/api/auth/logout',    { method:'POST' }); } catch(e) {}
+        window.location.href = '/login';
+    });
+
+    // 3. Load app config (names + footer + model for source inference)
+    fetch('/api/config').then(r=>r.json()).then(cfg => {
+        _appConfig = cfg;   // store globally so _buildSources() can use cfg.model
+        if (cfg.app_name)    { document.getElementById('topbar-title').textContent=cfg.app_name; document.getElementById('page-heading').textContent=cfg.app_name; document.title=cfg.app_name; }
+        if (cfg.company_name){ document.getElementById('sidebar-brand').textContent=cfg.company_name; document.getElementById('topbar-brand-mobile').textContent=cfg.company_name; document.getElementById('breadcrumb-company').textContent=cfg.company_name; }
+        if (cfg.footer_text) { document.getElementById('footer-brand').textContent=cfg.footer_text; }
+    }).catch(()=>{});
+
+    // 4. Pipeline state check on page load.
+    fetch('/api/status').then(r=>r.json()).then(d => {
+        if (d.status === 'running') {
+            // ── Active run in progress — reconnect ──────────────────
+            setStatus('running');
+            _setPipelineRunning(true);
+            updateStatCards(d.stats || {});
+            updateProgress(d.current || 0, d.total || 0);
+            document.getElementById('progress-wrap').classList.remove('hidden');
+            // Re-attach SSE stream so live log works after a page reload
+            if (_evtSource) _evtSource.close();
+            _evtSource = new EventSource('/api/stream');
+            _evtSource.onmessage = e => {
+                const ev = JSON.parse(e.data); const t = ev.type||'step'; const m = ev.msg||'';
+                if (t==='ping') return;
+                logLine(t, m);
+                if (t==='complete') { setStatus('complete'); _setPipelineRunning(false); _evtSource.close(); loadResults(); IdleTimer.onPipelineComplete(); }
+                else if (t==='error') { setStatus('error'); _setPipelineRunning(false); }
+            };
+            _evtSource.onerror = () => { logLine('error','Stream disconnected.'); _setPipelineRunning(false); setStatus('error'); _evtSource.close(); };
+            statsPoller();
+        } else {
+            // ── Not running (complete / error / idle) ────────────────
+            // Always reset server state on page load so the dashboard
+            // starts fresh — previous results live in Run History.
+            if (d.status !== 'idle') {
+                fetch('/api/pipeline/reset', { method: 'POST' }).catch(() => {});
+            }
+            // Explicitly ensure frontend is in clean idle state
+            setStatus('idle');
+            updateStatCards({});
+            updateProgress(0, 0);
+            document.getElementById('progress-wrap').classList.add('hidden');
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('export-btn').classList.add('hidden');
+        }
+    }).catch(()=>{});
+
+    // 5. Block accidental browser refresh / tab-close while pipeline is running.
+    window.addEventListener('beforeunload', function(e) {
+        const runBtn = document.getElementById('run-btn');
+        if (runBtn && runBtn.disabled) {   // run-btn is disabled only while running
+            e.preventDefault();
+            e.returnValue = 'A pipeline run is in progress. Refreshing will interrupt it.';
+            return e.returnValue;
+        }
+    });
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════
+     CAMPAIGN MANAGER MODAL
+════════════════════════════════════════════════════════════ -->
+<!-- campaign-modal removed; Campaign Manager is now the sidebar panel (panel-campaigns) -->
+
+<!-- ══════════════════════════════════════════════════════════
+     IDLE SESSION WARNING MODAL
+     Shown 60 s before auto-logout due to inactivity.
+════════════════════════════════════════════════════════════ -->
+<div id="idle-warning-modal" class="overlay-modal" role="dialog" aria-modal="true" aria-labelledby="idle-warn-title">
+  <div style="background:var(--bg-card,#fff);border-radius:.875rem;padding:2rem 2.25rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.22);text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:.75rem;">⏱️</div>
+    <h2 id="idle-warn-title" style="font-size:1.15rem;font-weight:700;margin-bottom:.5rem;color:var(--text-primary,#0f172a);">
+      Session Expiring Soon
+    </h2>
+    <p style="font-size:.875rem;color:var(--text-secondary,#64748b);margin-bottom:.25rem;">
+      You've been inactive. You will be automatically logged out in:
+    </p>
+    <div id="idle-countdown" style="font-size:2.25rem;font-weight:800;color:#ef4444;margin:.75rem 0 1.25rem;font-variant-numeric:tabular-nums;">
+      60
+    </div>
+    <p style="font-size:.8rem;color:var(--text-secondary,#64748b);margin-bottom:1.5rem;">
+      seconds
+    </p>
+    <button onclick="IdleTimer.stayLoggedIn()"
+      style="width:100%;padding:.65rem 1.25rem;border-radius:.5rem;background:#6366f1;color:#fff;font-weight:600;font-size:.9rem;border:none;cursor:pointer;">
+      Stay Logged In
+    </button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   CAMPAIGN MANAGER
+════════════════════════════════════════════════════════════ */
+const AGENT_LABELS = {
+    icp:             'Agent 1 — ICP Qualification',
+    research:        'Agent 2 — Company Research',
+    pain:            'Agent 3 — Pain Signal Detection',
+    contact:         'Agent 4 — Contact Intelligence',
+    personalization: 'Agent 5 — Personalization',
+    email:           'Agent 6 — Email Generation',
+};
+
+let _campaigns      = [];
+let _activeCampaign = null;   // full campaign obj being edited
+
+/* ── Open campaign panel (navigate to sidebar panel) ── */
+function openCampaignModal() {
+    showPanel('campaigns');
+}
+
+/* ── Relative time helper ── */
+function _relativeTime(date) {
+    const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diff < 60)    return 'Just now';
+    if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    if (diff < 604800)return Math.floor(diff/86400) + 'd ago';
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+/* ── Avatar color by index ── */
+const _CAMP_COLORS = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6','#ef4444','#14b8a6'];
+
+/* ── Filter campaigns by search term ── */
+function _filterCampaigns(q) {
+    const term = (q || '').toLowerCase().trim();
+    document.querySelectorAll('.camp-item').forEach(el => {
+        const name = (el.dataset.name || '').toLowerCase();
+        el.style.display = (!term || name.includes(term)) ? '' : 'none';
+    });
+}
+
+/* ── Load & render campaign list ── */
+function _loadCampaignList() {
+    const el = document.getElementById('campaign-list');
+    fetch('/api/campaigns').then(r => r.json()).then(list => {
+        _campaigns = list;
+
+        /* Update count label */
+        const countEl = document.getElementById('camp-count-label');
+        if (countEl) countEl.textContent = list.length
+            ? list.length + ' campaign' + (list.length !== 1 ? 's' : '')
+            : '';
+
+        if (!list.length) {
+            el.innerHTML = `
+                <div style="padding:2.5rem 1rem;text-align:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(165,180,252,.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:.85rem;">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <div style="font-size:.78rem;color:rgba(165,180,252,.4);line-height:1.65;">No campaigns yet.<br>Click <strong style="color:rgba(165,180,252,.7);">New Campaign</strong> to start.</div>
+                </div>`;
+            _refreshCampaignDropdown(list);
+            return;
+        }
+
+        el.innerHTML = list.map((c, idx) => {
+            const color    = _CAMP_COLORS[idx % _CAMP_COLORS.length];
+            const initials = c.name.trim().split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase() || '?';
+            const when     = _relativeTime(new Date(c.updated_at));
+            return `
+            <div class="camp-item" data-id="${c.id}" data-name="${escHtml(c.name.toLowerCase())}"
+                onclick="_selectCampaign(${c.id})"
+                style="padding:.75rem .85rem;border-radius:.65rem;cursor:pointer;margin-bottom:.35rem;border:1px solid transparent;transition:background .12s,border-color .12s;">
+                <div style="display:flex;align-items:center;gap:.75rem;">
+                    <!-- Avatar -->
+                    <div class="camp-avatar" data-id="${c.id}"
+                        style="width:38px;height:38px;border-radius:.6rem;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;letter-spacing:.03em;box-shadow:0 2px 6px rgba(0,0,0,.25);">
+                        ${initials}
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="camp-name" data-id="${c.id}"
+                            style="font-size:.85rem;font-weight:700;color:rgba(224,231,255,.9);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;">
+                            ${escHtml(c.name)}
+                        </div>
+                        <div style="font-size:.7rem;color:rgba(165,180,252,.5);margin-top:.15rem;">${when}</div>
+                    </div>
+                    <button onclick="event.stopPropagation();_deleteCampaign(${c.id})"
+                        onmouseover="this.style.color='#f87171'"
+                        onmouseout="this.style.color='rgba(165,180,252,.25)'"
+                        style="flex-shrink:0;background:none;border:none;cursor:pointer;color:rgba(165,180,252,.25);font-size:.7rem;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:.25rem;padding:0;line-height:1;"
+                        title="Delete">✕</button>
+                </div>
+                ${c.description ? `<div style="font-size:.72rem;color:rgba(165,180,252,.4);margin:.4rem 0 0 3.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.description)}</div>` : ''}
+            </div>`;
+        }).join('');
+
+        if (_activeCampaign) _highlightCampaignItem(_activeCampaign.id);
+        _refreshCampaignDropdown(list);
+    }).catch(() => {
+        el.innerHTML = '<div style="padding:1rem;font-size:.78rem;color:#f87171;text-align:center;">Failed to load campaigns.</div>';
+    });
+}
+
+function _highlightCampaignItem(id) {
+    document.querySelectorAll('.camp-item').forEach(el => {
+        const active = parseInt(el.dataset.id) === id;
+        el.style.background  = active ? 'rgba(99,102,241,.22)' : 'transparent';
+        el.style.borderColor = active ? 'rgba(165,180,252,.4)' : 'transparent';
+    });
+    document.querySelectorAll('.camp-name').forEach(el => {
+        el.style.color = parseInt(el.dataset.id) === id
+            ? '#fff'
+            : 'rgba(224,231,255,.85)';
+    });
+    document.querySelectorAll('.camp-avatar').forEach(el => {
+        const active = parseInt(el.dataset.id) === id;
+        el.style.boxShadow = active ? '0 0 0 2.5px rgba(165,180,252,.7)' : '0 2px 6px rgba(0,0,0,.25)';
+    });
+}
+
+function _refreshCampaignDropdown(list) {
+    const sel = document.getElementById('campaign-select');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— No Campaign (use global prompts) —</option>' +
+        list.map(c => `<option value="${c.id}">${escHtml(c.name)}</option>`).join('');
+    sel.value = cur;
+}
+
+/* ── Select & load a campaign for editing ── */
+function _selectCampaign(id) {
+    fetch(`/api/campaigns/${id}`).then(r => r.json()).then(c => {
+        _activeCampaign = c;
+        _highlightCampaignItem(id);
+        _renderEditor(c);
+    }).catch(() => {});
+}
+
+/* ── Render the right-panel editor ── */
+function _renderEditor(c) {
+    const prompts   = c.prompts || {};
+    const agents    = Object.keys(AGENT_LABELS);
+    const idx       = _campaigns.findIndex(x => x.id === c.id);
+    const color     = _CAMP_COLORS[idx >= 0 ? idx % _CAMP_COLORS.length : 0];
+    const initials  = c.name.trim().split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase() || '?';
+    const customCnt = agents.filter(k => prompts[k] && prompts[k].trim()).length;
+
+    document.getElementById('campaign-editor').innerHTML = `
+
+        <!-- ══ Sticky top header ══ -->
+        <div style="position:sticky;top:0;z-index:10;background:var(--bg-card,#fff);border-bottom:1px solid var(--border-color,#e2e8f0);padding:1rem 1.75rem;display:flex;align-items:center;gap:1rem;">
+            <!-- Avatar -->
+            <div style="width:42px;height:42px;border-radius:.65rem;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;box-shadow:0 3px 8px rgba(0,0,0,.18);">
+                ${initials}
+            </div>
+            <!-- Name + meta -->
+            <div style="flex:1;min-width:0;">
+                <input id="ce-name" value="${escHtml(c.name)}"
+                    style="display:block;width:100%;font-size:1rem;font-weight:800;color:var(--text-primary,#0f172a);background:transparent;border:none;outline:none;padding:0;margin-bottom:.15rem;font-family:inherit;"
+                    placeholder="Campaign name">
+                <input id="ce-desc" value="${escHtml(c.description || '')}" placeholder="Add a description…"
+                    style="display:block;width:100%;font-size:.78rem;color:var(--text-secondary,#64748b);background:transparent;border:none;outline:none;padding:0;font-family:inherit;">
+            </div>
+            <!-- Stats pill -->
+            <div style="flex-shrink:0;text-align:center;padding:.4rem .85rem;background:#f1f5f9;border-radius:.5rem;">
+                <div style="font-size:1rem;font-weight:800;color:#6366f1;line-height:1.1;">${customCnt}</div>
+                <div style="font-size:.6rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;">custom</div>
+            </div>
+            <!-- Save button -->
+            <button onclick="_saveCampaign(${c.id})"
+                onmouseover="this.style.background='#4f46e5'"
+                onmouseout="this.style.background='#6366f1'"
+                style="flex-shrink:0;padding:.6rem 1.4rem;background:#6366f1;color:#fff;border:none;border-radius:.55rem;font-weight:700;font-size:.83rem;cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,.3);white-space:nowrap;transition:background .15s;">
+                Save
+            </button>
+        </div>
+
+        <!-- ══ Body content ══ -->
+        <div style="padding:1.5rem 1.75rem 2rem;">
+
+            <!-- Save feedback -->
+            <div id="ce-save-msg" class="hidden"
+                style="margin-bottom:1rem;font-size:.82rem;font-weight:600;padding:.5rem .9rem;border-radius:.5rem;border:1px solid currentColor;"></div>
+
+            <!-- Agent Prompts heading -->
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+                <span style="font-size:.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;">Agent Prompts</span>
+                <div style="flex:1;height:1px;background:var(--border-color,#e2e8f0);"></div>
+                <span style="font-size:.72rem;color:#94a3b8;">${customCnt} of ${agents.length} customized</span>
+            </div>
+            <p style="font-size:.78rem;color:var(--text-secondary,#94a3b8);margin:0 0 1.25rem;line-height:1.6;">
+                Override any agent's system prompt for this campaign. Leave blank to use the global default.
+            </p>
+
+            <!-- Agent cards -->
+            ${agents.map((key, i) => {
+                const hasCustom = !!(prompts[key] && prompts[key].trim());
+                return `
+                <div style="background:var(--bg-card,#fff);border:1px solid var(--border-color,#e2e8f0);border-radius:.75rem;margin-bottom:.875rem;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+                    <div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;background:${hasCustom ? '#fafafe' : 'var(--bg-muted,#f8fafc)'};border-bottom:1px solid var(--border-color,#e2e8f0);">
+                        <div style="width:26px;height:26px;background:${hasCustom ? '#6366f1' : '#e2e8f0'};color:${hasCustom ? '#fff' : '#94a3b8'};border-radius:.4rem;display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:800;flex-shrink:0;">
+                            ${String(i+1).padStart(2,'0')}
+                        </div>
+                        <span style="flex:1;font-size:.845rem;font-weight:700;color:var(--text-primary,#0f172a);">${AGENT_LABELS[key]}</span>
+                        <span id="ce-badge-${key}"
+                            style="font-size:.67rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;${hasCustom
+                                ? 'background:#dcfce7;color:#16a34a;'
+                                : 'background:#f1f5f9;color:#94a3b8;'}">
+                            ${hasCustom ? '✓ Customized' : 'Using default'}
+                        </span>
+                        <button data-copy-ta="ce-prompt-${key}" onclick="_copyPrompt('ce-prompt-${key}')"
+                            style="display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-weight:600;padding:.25rem .65rem;border-radius:.4rem;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;cursor:pointer;transition:background .15s;flex-shrink:0;"
+                            onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                            <svg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect width='14' height='14' x='8' y='8' rx='2' ry='2'/><path d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/></svg>
+                            Copy
+                        </button>
+                    </div>
+                    <div style="padding:.75rem 1rem;background:var(--bg-card,#fff);">
+                        <textarea id="ce-prompt-${key}" rows="6"
+                            oninput="_onPromptInput('${key}',this)"
+                            placeholder="Leave blank to use the global default prompt…"
+                            style="width:100%;font-size:.775rem;font-family:'Courier New',monospace;border:1px solid var(--border-color,#e2e8f0);border-radius:.5rem;padding:.65rem .85rem;resize:vertical;background:var(--bg-input,#fff);color:var(--text-primary,#0f172a);line-height:1.65;outline:none;box-sizing:border-box;transition:border-color .15s;"
+                            onfocus="this.style.borderColor='#a5b4fc'"
+                            onblur="this.style.borderColor='var(--border-color,#e2e8f0)'">${escHtml(prompts[key] || '')}</textarea>
+                    </div>
+                </div>`;
+            }).join('')}
+
+            <!-- Bottom save bar -->
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:.875rem;padding-top:1rem;border-top:1px solid var(--border-color,#e2e8f0);margin-top:.5rem;">
+                <span id="ce-save-msg-bottom" class="hidden" style="font-size:.82rem;font-weight:600;"></span>
+                <button onclick="_saveCampaign(${c.id})"
+                    onmouseover="this.style.background='#4f46e5'"
+                    onmouseout="this.style.background='#6366f1'"
+                    style="padding:.65rem 1.75rem;background:#6366f1;color:#fff;border:none;border-radius:.55rem;font-weight:700;font-size:.875rem;cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,.25);transition:background .15s;">
+                    Save Campaign
+                </button>
+            </div>
+
+        </div>`;
+}
+
+/* ── Live badge update as user types ── */
+function _onPromptInput(key, el) {
+    const badge = document.getElementById('ce-badge-' + key);
+    if (!badge) return;
+    if (el.value.trim()) {
+        badge.textContent = 'Customized';
+        badge.style.background = '#dcfce7';
+        badge.style.color = '#16a34a';
+    } else {
+        badge.textContent = 'Default';
+        badge.style.background = '#f1f5f9';
+        badge.style.color = '#94a3b8';
+    }
+}
+
+/* ── Save campaign (name + description + all prompts) ── */
+function _saveCampaign(id) {
+    const prompts = {};
+    Object.keys(AGENT_LABELS).forEach(k => {
+        const el = document.getElementById(`ce-prompt-${k}`);
+        if (el) prompts[k] = el.value;
+    });
+    const payload = {
+        name:        document.getElementById('ce-name').value.trim(),
+        description: document.getElementById('ce-desc').value.trim(),
+        prompts,
+    };
+    fetch(`/api/campaigns/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+    }).then(r => r.json()).then(d => {
+        const msgTop = document.getElementById('ce-save-msg');
+        const msgBot = document.getElementById('ce-save-msg-bottom');
+        if (d.success) {
+            _activeCampaign = d.campaign;
+            [msgTop, msgBot].forEach(m => {
+                m.textContent = '✓ Saved!';
+                m.style.color = '#16a34a';
+                m.classList.remove('hidden');
+            });
+            _loadCampaignList();
+            setTimeout(() => { [msgTop, msgBot].forEach(m => m.classList.add('hidden')); }, 2000);
+        } else {
+            [msgTop, msgBot].forEach(m => {
+                m.textContent = '✗ ' + (d.error || 'Save failed');
+                m.style.color = '#ef4444';
+                m.classList.remove('hidden');
+            });
+        }
+    }).catch(() => {});
+}
+
+/* ── Create new campaign ── */
+function showNewCampaignForm() {
+    _activeCampaign = null;
+    _highlightCampaignItem(-1); // deselect all
+    document.getElementById('campaign-editor').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:3rem 2rem;">
+            <div style="width:100%;max-width:480px;background:var(--bg-card,#fff);border:1px solid var(--border-color,#e2e8f0);border-radius:.875rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.07);">
+
+                <!-- Form header -->
+                <div style="padding:1.25rem 1.5rem;background:linear-gradient(135deg,#6366f1,#818cf8);display:flex;align-items:center;gap:.75rem;">
+                    <div style="width:36px;height:36px;border-radius:.5rem;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📁</div>
+                    <div>
+                        <div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:.1rem;">New</div>
+                        <div style="font-size:.95rem;font-weight:800;color:#fff;">Create Campaign</div>
+                    </div>
+                </div>
+
+                <!-- Form fields -->
+                <div style="padding:1.5rem;">
+                    <label style="font-size:.78rem;font-weight:700;color:var(--text-secondary,#64748b);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:.4rem;">Campaign Name <span style="color:#ef4444;">*</span></label>
+                    <input id="nc-name" placeholder="e.g. Q3 Cardiology Outreach"
+                        style="width:100%;padding:.6rem .85rem;border:1.5px solid var(--border-color,#e2e8f0);border-radius:.55rem;font-size:.9rem;background:var(--bg-input,#fff);color:var(--text-primary,#0f172a);outline:none;box-sizing:border-box;transition:border-color .15s;"
+                        onfocus="this.style.borderColor='#a5b4fc'"
+                        onblur="this.style.borderColor='var(--border-color,#e2e8f0)'">
+                    <label style="font-size:.78rem;font-weight:700;color:var(--text-secondary,#64748b);text-transform:uppercase;letter-spacing:.07em;display:block;margin:1rem 0 .4rem;">Description <span style="color:#94a3b8;font-weight:500;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                    <input id="nc-desc" placeholder="Short description of this campaign's focus"
+                        style="width:100%;padding:.6rem .85rem;border:1.5px solid var(--border-color,#e2e8f0);border-radius:.55rem;font-size:.875rem;background:var(--bg-input,#fff);color:var(--text-primary,#0f172a);outline:none;box-sizing:border-box;transition:border-color .15s;"
+                        onfocus="this.style.borderColor='#a5b4fc'"
+                        onblur="this.style.borderColor='var(--border-color,#e2e8f0)'">
+                    <div id="nc-msg" class="hidden" style="font-size:.8rem;font-weight:600;margin-top:.85rem;padding:.45rem .75rem;border-radius:.4rem;border:1px solid currentColor;"></div>
+                    <div style="margin-top:1.25rem;display:flex;gap:.75rem;">
+                        <button onclick="_createCampaign()"
+                            onmouseover="this.style.background='#4f46e5'"
+                            onmouseout="this.style.background='#6366f1'"
+                            style="flex:1;padding:.65rem;background:#6366f1;color:#fff;border:none;border-radius:.55rem;font-weight:700;font-size:.875rem;cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,.3);transition:background .15s;">
+                            Create Campaign
+                        </button>
+                        <button onclick="_showEmptyState()"
+                            style="padding:.65rem 1.1rem;border:1.5px solid var(--border-color,#e2e8f0);background:none;border-radius:.55rem;font-size:.875rem;cursor:pointer;color:var(--text-secondary,#64748b);font-weight:600;">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    document.getElementById('nc-name').focus();
+}
+
+function _showEmptyState() {
+    _activeCampaign = null;
+    _highlightCampaignItem(-1);
+    document.getElementById('campaign-editor').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;padding:3rem 2rem;">
+            <div style="width:72px;height:72px;border-radius:1.25rem;background:linear-gradient(135deg,#ede9fe,#ddd6fe);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <h3 style="font-size:1.05rem;font-weight:800;color:var(--text-primary,#0f172a);margin:0 0 .5rem;">No Campaign Selected</h3>
+            <p style="font-size:.83rem;color:var(--text-secondary,#94a3b8);margin:0 0 1.75rem;max-width:260px;line-height:1.65;">Select a campaign from the sidebar to view and edit its configuration.</p>
+            <button onclick="showNewCampaignForm()"
+                style="padding:.65rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:.55rem;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(99,102,241,.3);">
+                + Create New Campaign
+            </button>
+        </div>`;
+}
+
+function _createCampaign() {
+    const name = (document.getElementById('nc-name').value || '').trim();
+    const desc = (document.getElementById('nc-desc').value || '').trim();
+    const msg  = document.getElementById('nc-msg');
+    if (!name) {
+        msg.textContent = 'Campaign name is required.';
+        msg.style.color = '#ef4444';
+        msg.classList.remove('hidden');
+        return;
+    }
+    fetch('/api/campaigns', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name, description: desc }),
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            _activeCampaign = d.campaign;
+            _loadCampaignList();
+            _renderEditor(d.campaign);
+        } else {
+            msg.textContent = '✗ ' + (d.error || 'Create failed');
+            msg.style.color = '#ef4444';
+            msg.classList.remove('hidden');
+        }
+    }).catch(() => {});
+}
+
+/* ── Delete campaign ── */
+function _deleteCampaign(id) {
+    if (!confirm('Delete this campaign? This cannot be undone.')) return;
+    fetch(`/api/campaigns/${id}`, { method: 'DELETE' })
+        .then(r => r.json()).then(d => {
+            if (d.success) {
+                if (_activeCampaign && _activeCampaign.id === id) {
+                    _activeCampaign = null;
+                    document.getElementById('campaign-editor').innerHTML =
+                        '<div style="color:var(--text-secondary,#64748b);font-size:.875rem;padding-top:3rem;text-align:center;">Select a campaign on the left, or create a new one.</div>';
+                }
+                _loadCampaignList();
+                // Clear dropdown if deleted campaign was selected
+                const sel = document.getElementById('campaign-select');
+                if (sel.value == id) sel.value = '';
+            }
+        }).catch(() => {});
+}
+
+/* ── Bootstrap: load campaign dropdown on page load ── */
+fetch('/api/campaigns').then(r => r.json()).then(list => {
+    _campaigns = list;
+    _refreshCampaignDropdown(list);
+}).catch(() => {});
+
+
+/* ════════════════════════════════════════════════════════════
+   IDLE SESSION TIMER
+   ─ Tracks user activity across the whole page
+   ─ After pipeline completes → 2-min cooldown before IDLE starts
+   ─ At (IDLE_TIMEOUT - WARN_BEFORE) → shows warning modal
+   ─ At IDLE_TIMEOUT                 → auto-logout
+   ─ Every HEARTBEAT_INTERVAL        → pings server to keep cookie alive
+════════════════════════════════════════════════════════════ */
+const IdleTimer = (() => {
+    const IDLE_TIMEOUT_MS     = 15 * 60 * 1000;  // 15 minutes idle → logout
+    const WARN_BEFORE_MS      =  1 * 60 * 1000;  //  1 minute before logout → show warning
+    const COMPLETE_COOLDOWN_MS =  2 * 60 * 1000;  //  2-min grace period after pipeline finishes
+    const HEARTBEAT_INTERVAL  =  3 * 60 * 1000;  //  ping server every 3 min while active
+
+    let _idleTimer      = null;
+    let _warnTimer      = null;
+    let _countdownTimer = null;
+    let _heartbeatTimer = null;
+    let _inCooldown     = false;
+    let _cooldownTimer  = null;
+    let _warningVisible = false;
+    let _countdownSec   = 0;
+
+    const _modal      = document.getElementById('idle-warning-modal');
+    const _countdownEl = document.getElementById('idle-countdown');
+
+    /* ── Helpers ─────────────────────────────────────────── */
+    function _showWarning() {
+        if (_warningVisible) return;
+        _warningVisible = true;
+        _countdownSec   = Math.round(WARN_BEFORE_MS / 1000);
+        _countdownEl.textContent = _countdownSec;
+        _modal.classList.add('open');
+        _countdownTimer = setInterval(() => {
+            _countdownSec--;
+            _countdownEl.textContent = _countdownSec;
+            if (_countdownSec <= 0) _doLogout();
+        }, 1000);
+    }
+
+    function _hideWarning() {
+        _warningVisible = false;
+        _modal.classList.remove('open');
+        clearInterval(_countdownTimer);
+        _countdownTimer = null;
+    }
+
+    function _doLogout() {
+        clearAll();
+        fetch('/api/auth/logout', { method: 'POST' })
+            .finally(() => { window.location.href = '/login'; });
+    }
+
+    function _heartbeat() {
+        fetch('/api/auth/heartbeat', { method: 'POST' }).catch(() => {});
+    }
+
+    function clearAll() {
+        clearTimeout(_idleTimer);
+        clearTimeout(_warnTimer);
+        clearTimeout(_cooldownTimer);
+        clearInterval(_countdownTimer);
+        clearInterval(_heartbeatTimer);
+    }
+
+    /* ── Schedule idle & warn timers ─────────────────────── */
+    function _schedule() {
+        clearTimeout(_idleTimer);
+        clearTimeout(_warnTimer);
+
+        // Warn 1 min before the full timeout fires
+        _warnTimer  = setTimeout(_showWarning, IDLE_TIMEOUT_MS - WARN_BEFORE_MS);
+        _idleTimer  = setTimeout(_doLogout,    IDLE_TIMEOUT_MS);
+    }
+
+    /* ── Reset on any user activity ──────────────────────── */
+    function _onActivity() {
+        if (_inCooldown) return;         // don't count idle during post-pipeline cooldown
+        if (_warningVisible) return;     // user must click "Stay Logged In" explicitly
+        _schedule();
+    }
+
+    /* ── Public: called by pipeline 'complete' event ─────── */
+    function onPipelineComplete() {
+        // Pause idle counting for the cooldown window
+        _inCooldown = true;
+        clearTimeout(_idleTimer);
+        clearTimeout(_warnTimer);
+        clearTimeout(_cooldownTimer);
+
+        _cooldownTimer = setTimeout(() => {
+            _inCooldown = false;
+            _schedule();             // restart idle timer after cooldown
+        }, COMPLETE_COOLDOWN_MS);
+    }
+
+    /* ── Public: "Stay Logged In" button ─────────────────── */
+    function stayLoggedIn() {
+        _hideWarning();
+        _heartbeat();
+        _schedule();
+    }
+
+    /* ── Boot ────────────────────────────────────────────── */
+    function init() {
+        const ACTIVITY_EVENTS = ['mousemove','mousedown','keydown','touchstart','scroll','click'];
+        ACTIVITY_EVENTS.forEach(ev =>
+            document.addEventListener(ev, _onActivity, { passive: true })
+        );
+
+        // Periodic heartbeat to keep the server-side cookie alive
+        _heartbeatTimer = setInterval(_heartbeat, HEARTBEAT_INTERVAL);
+
+        // Start the first idle countdown
+        _schedule();
+    }
+
+    init();
+    return { stayLoggedIn, onPipelineComplete };
+})();
+</script>
+
+</body>
+</html>

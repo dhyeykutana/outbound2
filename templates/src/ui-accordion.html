@@ -1,0 +1,215 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Accordion" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Accordion" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Default Example</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div data-kt-accordion="true" class="kt-accordion">
+                                <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                    <button id="accordion_toggle_0" data-kt-accordion-toggle="true" aria-controls="accordion_content_0" class="kt-accordion-toggle">
+                                        <span class="kt-accordion-title">How is pricing determined for each plan?</span>
+                                        <span aria-hidden="true" class="kt-accordion-indicator">
+                                            <span class="kt-accordion-indicator-on"><i class="iconify lucide--plus"></i></span>
+                                            <span class="kt-accordion-indicator-off"><i class="iconify lucide--minus"></i></span>
+                                        </span>
+                                    </button>
+
+                                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_0" id="accordion_content_0">
+                                        <div class="kt-accordion-wrapper">
+                                            KtUI embraces flexible licensing options that empower you to choose the
+                                            perfect fit for your project&#x27;s needs and budget.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                    <button id="accordion_toggle_1" data-kt-accordion-toggle="true" aria-controls="accordion_content_1" class="kt-accordion-toggle">
+                                        <span class="kt-accordion-title">What payment methods are accepted for
+                                            subscriptions?</span>
+                                        <span aria-hidden="true" class="kt-accordion-indicator">
+                                            <span class="kt-accordion-indicator-on"><i class="iconify lucide--plus"></i></span>
+                                            <span class="kt-accordion-indicator-off"><i class="iconify lucide--minus"></i></span>
+                                        </span>
+                                    </button>
+                                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_1" id="accordion_content_1">
+                                        <div class="kt-accordion-wrapper">
+                                            KtUI embraces flexible licensing options that empower you to choose the
+                                            perfect fit for your project&#x27;s needs and budget.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                    <button id="accordion_toggle_2" data-kt-accordion-toggle="true" aria-controls="accordion_content_2" class="kt-accordion-toggle">
+                                        <span class="kt-accordion-title">Are there any hidden fees in the pricing?</span>
+                                        <span aria-hidden="true" class="kt-accordion-indicator">
+                                            <span class="kt-accordion-indicator-on"><i class="iconify lucide--plus"></i></span>
+                                            <span class="kt-accordion-indicator-off"><i class="iconify lucide--minus"></i></span>
+                                        </span>
+                                    </button>
+                                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_2" id="accordion_content_2">
+                                        <div class="kt-accordion-wrapper">
+                                            KtUI embraces flexible licensing options that empower you to choose the
+                                            perfect fit for your project&#x27;s needs and budget.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Default Open</div>
+                        </div>
+                        <div class="kt-card-content">
+                            <div class="kt-card-content">
+                                <div data-kt-accordion="true" class="kt-accordion">
+                                    <!-- Default Open Accordion -->
+                                    <div data-kt-accordion-item="true" class="kt-accordion-item active">
+                                        <button id="accordion_toggle_default" data-kt-accordion-toggle="true" aria-controls="accordion_content_default" class="kt-accordion-toggle">
+                                            <span class="kt-accordion-title">How is pricing determined for each plan?</span>
+                                            <span aria-hidden="true" class="kt-accordion-indicator">
+                                                <span class="kt-accordion-indicator-on"><i class="iconify lucide--plus"></i></span>
+                                                <span class="kt-accordion-indicator-off"><i class="iconify lucide--minus"></i></span>
+                                            </span>
+                                        </button>
+                                        <div class="kt-accordion-content" aria-labelledby="accordion_toggle_default" id="accordion_content_default">
+                                            <div class="kt-accordion-wrapper">
+                                                Reui embraces flexible licensing options that empower you to choose the perfect fit for your project&#x27;s needs and budget.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Accordion 1 -->
+                                    <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                        <button id="accordion_toggle_1" data-kt-accordion-toggle="true" aria-controls="accordion_content_1" class="kt-accordion-toggle">
+                                            <span class="kt-accordion-title">What payment methods are accepted for subscriptions?</span>
+                                            <span aria-hidden="true" class="kt-accordion-indicator">
+                                                <span class="kt-accordion-indicator-on"><i class="iconify lucide--plus"></i></span>
+                                                <span class="kt-accordion-indicator-off"><i class="iconify lucide--minus"></i></span>
+                                            </span>
+                                        </button>
+                                        <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_1" id="accordion_content_1">
+                                            <div class="kt-accordion-wrapper">
+                                                Reui embraces flexible licensing options that empower you to choose the perfect fit for your project&#x27;s needs and budget.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Accordion 2 -->
+                                    <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                        <button id="accordion_toggle_2" data-kt-accordion-toggle="true" aria-controls="accordion_content_2" class="kt-accordion-toggle">
+                                            <span class="kt-accordion-title">Are there any hidden fees in the pricing?</span>
+                                            <span aria-hidden="true" class="kt-accordion-indicator">
+                                                <span class="kt-accordion-indicator-on"><i class="iconify lucide--plus"></i></span>
+                                                <span class="kt-accordion-indicator-off"><i class="iconify lucide--minus"></i></span>
+                                            </span>
+                                        </button>
+                                        <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_2" id="accordion_content_2">
+                                            <div class="kt-accordion-wrapper">
+                                                Reui embraces flexible licensing options that empower you to choose the perfect fit for your project&#x27;s needs and budget.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header">
+                            <div class="kt-card-title">Outline Style</div>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <div data-kt-accordion="true" data-kt-accordion-expand-all="true" class="kt-accordion kt-accordion-outline">
+                                <div data-kt-accordion-item="true" class="kt-accordion-item active">
+                                    <button id="accordion_toggle_0" data-kt-accordion-toggle="true" aria-controls="accordion_content_0" class="kt-accordion-toggle">
+                                        <span class="kt-accordion-title">How is pricing determined for each plan?</span><span aria-hidden="true" class="kt-accordion-indicator"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus kt-accordion-indicator-on" aria-hidden="true">
+                                                <path d="M5 12h14"></path>
+                                                <path d="M12 5v14"></path>
+                                            </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus kt-accordion-indicator-off" aria-hidden="true">
+                                                <path d="M5 12h14"></path>
+                                            </svg></span>
+                                    </button>
+                                    <div class="kt-accordion-content" aria-labelledby="accordion_toggle_0" id="accordion_content_0">
+                                        <div class="kt-accordion-wrapper">
+                                            Reui embraces flexible licensing options that empower you to choose the
+                                            perfect fit for your project&#x27;s needs and budget.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                    <button id="accordion_toggle_1" data-kt-accordion-toggle="true" aria-controls="accordion_content_1" class="kt-accordion-toggle">
+                                        <span class="kt-accordion-title">What payment methods are accepted for subscriptions?</span><span aria-hidden="true" class="kt-accordion-indicator"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus kt-accordion-indicator-on" aria-hidden="true">
+                                                <path d="M5 12h14"></path>
+                                                <path d="M12 5v14"></path>
+                                            </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus kt-accordion-indicator-off" aria-hidden="true">
+                                                <path d="M5 12h14"></path>
+                                            </svg></span>
+                                    </button>
+                                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_1" id="accordion_content_1">
+                                        <div class="kt-accordion-wrapper">
+                                            Reui embraces flexible licensing options that empower you to choose the
+                                            perfect fit for your project&#x27;s needs and budget.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-kt-accordion-item="true" class="kt-accordion-item">
+                                    <button id="accordion_toggle_2" data-kt-accordion-toggle="true" aria-controls="accordion_content_2" class="kt-accordion-toggle">
+                                        <span class="kt-accordion-title">Are there any hidden fees in the pricing?</span><span aria-hidden="true" class="kt-accordion-indicator"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus kt-accordion-indicator-on" aria-hidden="true">
+                                                <path d="M5 12h14"></path>
+                                                <path d="M12 5v14"></path>
+                                            </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus kt-accordion-indicator-off" aria-hidden="true">
+                                                <path d="M5 12h14"></path>
+                                            </svg></span>
+                                    </button>
+                                    <div class="kt-accordion-content hidden" aria-labelledby="accordion_toggle_2" id="accordion_content_2">
+                                        <div class="kt-accordion-wrapper">
+                                            Reui embraces flexible licensing options that empower you to choose the
+                                            perfect fit for your project&#x27;s needs and budget.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

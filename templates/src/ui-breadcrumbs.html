@@ -1,0 +1,194 @@
+{{> main }}
+
+<head>
+    {{> title-meta title="Breadcrumb" }}
+
+    {{> head-css}}
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        {{> sidenav }}
+
+        <!-- Start Page Content here -->
+        <div class="page-content">
+
+            {{> topbar }}
+
+            <main>
+
+                {{> page-title subtitle="Components" title="Breadcrumb" }}
+
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <!-- Basic Breadcrumb -->
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Basic Breadcrumb</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <ol class="kt-breadcrumb">
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Home</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Components</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <span class="kt-breadcrumb-link">Breadcrumb</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Breadcrumb with Custom Separator -->
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Custom Separator</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <ol class="kt-breadcrumb">
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Dashboard</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator">/</li>
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Settings</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator">/</li>
+                                <li class="kt-breadcrumb-item">
+                                    <span class="kt-breadcrumb-link">Profile</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Breadcrumb with Icons -->
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Breadcrumb with Icons</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <ol class="kt-breadcrumb">
+                                <li class="kt-breadcrumb-item flex items-center">
+                                    <i class="iconify lucide--home me-1"></i>
+                                    <a href="#" class="kt-breadcrumb-link">Home</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item flex items-center">
+                                    <i class="iconify lucide--folder me-1"></i>
+                                    <a href="#" class="kt-breadcrumb-link">Projects</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item flex items-center">
+                                    <i class="iconify lucide--file-text me-1"></i>
+                                    <span class="kt-breadcrumb-link">Report.pdf</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Breadcrumb with Active Link -->
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Active Link</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <ol class="kt-breadcrumb">
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Home</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Library</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link text-blue-600 font-semibold">Data</a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Breadcrumb with Long Labels -->
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Long Labels</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <ol class="kt-breadcrumb">
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">Home</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link">This is a very long breadcrumb label</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <span class="kt-breadcrumb-link">Final Destination</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Breadcrumb with Custom Styling -->
+                    <div class="kt-card">
+                        <div class="kt-card-header flex items-center justify-between">
+                            <h5 class="text-lg font-medium text-default-950">Custom Styling</h5>
+                        </div>
+                        <div class="kt-card-content">
+                            <ol class="kt-breadcrumb text-sm text-gray-500">
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link hover:text-gray-700">Home</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right text-gray-400"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <a href="#" class="kt-breadcrumb-link hover:text-gray-700">Blog</a>
+                                </li>
+                                <li class="kt-breadcrumb-separator size-3.5">
+                                    <i class="iconify lucide--chevron-right text-gray-400"></i>
+                                </li>
+                                <li class="kt-breadcrumb-item">
+                                    <span class="kt-breadcrumb-link text-gray-700 font-medium">Post Title</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            {{> footer }}
+
+        </div>
+        <!-- End Page content -->
+
+    </div>
+
+    {{> footer-scripts }}
+
+</body>
+
+</html>

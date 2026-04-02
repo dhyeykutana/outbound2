@@ -1,0 +1,146 @@
+/**
+* Theme: Skotwind - Tailwind CSS Admin Layout & UI Kit Template
+* Author: MyraStudio
+* Module/App: App js
+*/
+
+
+
+
+import 'simplebar';
+
+
+class App {
+
+    constructor() {
+        this.html = document.getElementsByTagName('html')[0]
+        this.config = {};
+        this.defaultConfig = window.config;
+    }
+
+    initComponents() {
+
+        // Wave Effect
+        // Waves.init()
+    }
+
+    initTopbarScroll() {
+
+    }
+
+    initSidenav() {
+        var self = this;
+        var pageUrl = window.location.href.split(/[?#]/)[0];
+        document.querySelectorAll("ul.kt-accordion-menu .kt-accordion-menu-item .kt-accordion-menu-link").forEach((element) => {
+            if (element.href === pageUrl) {
+                element.classList.add("selected");
+
+                let parentMenuItem = element.closest(".kt-accordion-menu-item");
+                // parentMenuItem.classList.add("selected");
+
+                let parentMenu = element.parentElement.parentElement.parentElement.parentElement;
+                if (parentMenu && parentMenu.classList.contains("kt-accordion-menu-item")) {
+                    const collapseElement = parentMenu.querySelector(".kt-accordion-menu-toggle",);
+
+                    if (collapseElement) {
+                        // collapseElement.classList.add("selected");
+                        // collapseElement.classList.add("active");
+                        parentMenu.classList.add("active");
+                        const nextE = collapseElement.nextElementSibling;
+                        if (nextE) {
+                            nextE.classList.remove("hidden");
+                        }
+                    }
+                }
+            }
+        });
+
+        setTimeout(function () {
+            var activatedItem = document.querySelector("ul.kt-accordion-menu .kt-accordion-menu-item.active a.selected");
+            if (activatedItem != null) {
+                var simplebarContent = document.querySelector(".sidenav .simplebar-content-wrapper",);
+
+                var offset = activatedItem.offsetTop - 300;
+                if (simplebarContent && offset > 100) {
+                    scrollTo(simplebarContent, offset, 600);
+                }
+            }
+        }, 200);
+
+
+        // scrollTo (Sidenav Active Menu)
+        function easeInOutQuad(t, b, c, d) {
+            t /= d / 2;
+            if (t < 1) return (c / 2) * t * t + b;
+            t--;
+            return (-c / 2) * (t * (t - 2) - 1) + b;
+        }
+
+        function scrollTo(element, to, duration) {
+            var start = element.scrollTop,
+                change = to - start,
+                currentTime = 0,
+                increment = 20;
+            var animateScroll = function () {
+                currentTime += increment;
+                var val = easeInOutQuad(currentTime, start, change, duration);
+                element.scrollTop = val;
+                if (currentTime < duration) {
+                    setTimeout(animateScroll, increment);
+                }
+            };
+            animateScroll();
+        }
+    }
+
+    reverseQuery(element, query) {
+        while (element) {
+            if (element.parentElement) {
+                if (element.parentElement.querySelector(query) === element) return element
+            }
+            element = element.parentElement;
+        }
+        return null;
+    }
+
+    // Topbar Fullscreen Button
+    initfullScreenListener() {
+        var self = this;
+        var fullScreenBtn = document.querySelector('[data-toggle="fullscreen"]');
+
+        if (fullScreenBtn) {
+            fullScreenBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.body.classList.toggle('group-fullscreen')
+                if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.mozRequestFullScreen) {
+                        document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    }
+                } else {
+                    if (document.cancelFullScreen) {
+                        document.cancelFullScreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitCancelFullScreen) {
+                        document.webkitCancelFullScreen();
+                    }
+                }
+            });
+        }
+    }
+
+    init() {
+        this.initComponents();
+        this.initSidenav();
+        this.initTopbarScroll();
+        this.initfullScreenListener();
+    }
+}
+
+new App().init();
+
+

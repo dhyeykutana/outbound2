@@ -1,0 +1,36 @@
+
+aside+.page-content {
+    @apply lg:ms-sidenav transition-all;
+}
+
+.sidenav {
+    @apply w-sidenav fixed start-0 inset-y-0 bg-card flex flex-col border border-border;
+
+    .kt-accordion-menu-link i,
+    .kt-accordion-menu-icon {
+        @apply !size-5;
+    }
+
+    .kt-accordion-menu-content {
+        @apply ps-9.5;
+    }
+
+    .kt-accordion-menu-sub {
+        @apply relative space-y-1.5;
+
+        a {
+            @apply relative;
+        }
+
+        a::before {
+            content: "";
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 14 14'%3E%3Cpath d='M1 1v4a8 8 0 0 0 8 8h4' stroke='%23efefef' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 50% 50% / 100% no-repeat;
+            @apply absolute -start-4.5 top-0.5 size-4 bg-default-200;
+        }
+    }
+
+    .kt-accordion-menu-sub::before {
+        content: "";
+        @apply absolute -top-1 -start-4.5 bottom-7 w-0.5 bg-default-200;
+    }
+}
